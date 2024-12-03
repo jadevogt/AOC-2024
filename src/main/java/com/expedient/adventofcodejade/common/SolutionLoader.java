@@ -38,7 +38,8 @@ public class SolutionLoader {
     public BaseSolution loadForDay(int day, boolean test) throws ClassNotFoundException, RuntimeException, IOException {
         String inputPath = "%s/%d".formatted(inputsDirectory, day);
         String className = "%s.SolutionDay%d".formatted(solutionsPackage, day);
-        PuzzleInput sampleInput = PuzzleInput.sampleForDay(day);
+        PuzzleInput sampleInputOne = PuzzleInput.sampleForDay(day, true);
+        PuzzleInput sampleInputTwo = PuzzleInput.sampleForDay(day, false);
         PuzzleInput input;
         try {
             input = PuzzleInput.fromPath(inputPath);
@@ -46,12 +47,12 @@ public class SolutionLoader {
             if (!test) {
                 System.out.printf("No input for day %d found in ./inputs, using sample input instead.%n", day);
             }
-            input = sampleInput;
+            input = null;
         }
         try {
             var cls = classLoader.loadClass(className);
-            var constructor = cls.getConstructor(PuzzleInput.class, PuzzleInput.class);
-            return (BaseSolution) constructor.newInstance(input, sampleInput);
+            var constructor = cls.getConstructor(PuzzleInput.class, PuzzleInput.class, PuzzleInput.class);
+            return (BaseSolution) constructor.newInstance(input, sampleInputOne, sampleInputTwo);
         } catch (NoSuchMethodException | InvocationTargetException |
                  InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

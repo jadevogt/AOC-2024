@@ -7,20 +7,26 @@ import com.expedient.adventofcodejade.common.PuzzleInput;
  */
 public abstract class BaseSolution {
     private final PuzzleInput input;
-    private final PuzzleInput sampleInput;
+    private final PuzzleInput sampleInputOne;
+    private final PuzzleInput sampleInputTwo;
 
-    public BaseSolution(PuzzleInput input, PuzzleInput sampleInput) {
+    public BaseSolution(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
        this.input = input;
-       this.sampleInput = sampleInput;
+        this.sampleInputOne = sampleInputOne;
+        this.sampleInputTwo = sampleInputTwo;
     }
 
     /**
      * Returns either the input or sample input depending on whether this is a test run
      * @param test whether this is a test run
+     * @param partOne whether this is for part one
      * @return the corresponding input
      */
-    public PuzzleInput getInput(boolean test) {
-        return test ? sampleInput : input;
+    public PuzzleInput getInput(boolean test, boolean partOne) {
+        if (test || input == null) {
+            return partOne ? sampleInputOne : sampleInputTwo;
+        }
+        return input;
     }
 
     /**
@@ -29,8 +35,8 @@ public abstract class BaseSolution {
      */
     public void run(boolean test) {
         String pfx = test ? "output (sample)" : "output";
-        System.out.printf("Part one %s: %s%n", pfx, partOne(getInput(test)));
-        System.out.printf("Part two %s: %s%n", pfx, partTwo(getInput(test)));
+        System.out.printf("Part one %s: %s%n", pfx, partOne(getInput(test, true)));
+        System.out.printf("Part two %s: %s%n", pfx, partTwo(getInput(test, false)));
     }
 
     /**

@@ -8,8 +8,8 @@ import java.util.Collections;
 
 public class SolutionDay1 extends BaseSolution {
 
-    public SolutionDay1(PuzzleInput input, PuzzleInput sampleInput) {
-        super(input, sampleInput);
+    public SolutionDay1(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
+        super(input, sampleInputOne, sampleInputTwo);
     }
 
     @Override

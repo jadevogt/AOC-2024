@@ -9,8 +9,8 @@ import static java.lang.Math.abs;
 
 public class SolutionDay2 extends BaseSolution {
 
-    public SolutionDay2(PuzzleInput input, PuzzleInput sampleInput) {
-        super(input, sampleInput);
+    public SolutionDay2(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
+        super(input, sampleInputOne, sampleInputTwo);
     }
 
     /**

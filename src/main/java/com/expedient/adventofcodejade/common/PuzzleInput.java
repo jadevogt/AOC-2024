@@ -1,5 +1,7 @@
 package com.expedient.adventofcodejade.common;
 
+import com.expedient.adventofcodejade.util.StringTools;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,14 +51,22 @@ public class PuzzleInput {
     }
 
     /**
-     * Gets a PuzzleInput using the resource for a specific day (located in /src/main/resources)
+     * Gets a PuzzleInput using the resource for a specific day (located in /src/main/resources). Will first attempt to
+     * find sample input with the naming scheme [day]-[part] in case sample differs between parts 1 and 2, otherwise
+     * falls back to input with the naming scheme [day]
      *
      * @param day day for which the input is loaded
+     * @param partOne whether the sample is being fetched for part one
      * @return PuzzleInput object containing the given day's sample input
      * @throws IOException when the given day's input cannot be found in resources
      */
-    public static PuzzleInput sampleForDay(int day) throws IOException {
-        return PuzzleInput.fromResource("samples/%d".formatted(day));
+    public static PuzzleInput sampleForDay(int day, boolean partOne) throws IOException {
+        try {
+            var sfx = partOne ? 1 : 2;
+            return PuzzleInput.fromResource("samples/%d-%d".formatted(day, sfx));
+        } catch (IOException e) {
+            return PuzzleInput.fromResource("samples/%d".formatted(day));
+        }
     }
 
 
@@ -67,6 +77,14 @@ public class PuzzleInput {
      */
     public List<String> getFileLines() {
         return this.fileLines;
+    }
+
+    /**
+     * Get the input as a single string, rather than as a list of lines
+     * @return String containing the entire input
+     */
+    public String getSingleString() {
+        return String.join("\n", fileLines);
     }
 
 
@@ -107,14 +125,29 @@ public class PuzzleInput {
             if (transform != null) {
                 l = transform.apply(l);
             }
-            var primitiveCharArray = l.toCharArray();
-            Character[] chars = new Character[primitiveCharArray.length];
-            for (int i = 0; i < primitiveCharArray.length; i++) {
-                chars[i] = primitiveCharArray[i];
-            }
+            var chars = StringTools.ToCharacterArray(l);
             parsed.add(Arrays.stream(chars).filter(test).map(conversion).toList());
         }
         return parsed;
+    }
+
+
+    /**
+     * Returns the input as a rectangular 2D array of Character
+     * @return 2D array of Character derived from input
+     * @throws RuntimeException if the array would be ragged / the rows are of differing lengths
+     */
+    public Character[][] asTwoDimensionalArray() throws RuntimeException {
+        var height = fileLines.size();
+        var width = fileLines.get(0).length();
+        if (fileLines.stream().anyMatch(i -> i.length() != width)) {
+            throw new RuntimeException("The input has rows with inconsistent lengths, so the array would be ragged.");
+        }
+        Character[][] block = new Character[width][height];
+        for (int i = 0; i < height; i++) {
+            block[i] = StringTools.ToCharacterArray(fileLines.get(i));
+        }
+        return block;
     }
 
 }
