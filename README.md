@@ -35,7 +35,7 @@ about the solutions, the solution runner, etc.
 ### Download
 
 You can [download the executable JAR file here](https://jadevogt.com/aoc/aoc.jar), please note that it is compiled with
-Java 20, so you will need a relatively new JDK available to run it. Microsoft's distribution of
+Java 17, so you will need a relatively new JDK available to run it. Microsoft's distribution of
 [OpenJDK is freely available to download here](https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-21).
 Otherwise, it should work anywhere.
 
