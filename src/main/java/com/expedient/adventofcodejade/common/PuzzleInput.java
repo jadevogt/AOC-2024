@@ -143,21 +143,7 @@ public class PuzzleInput {
    * @throws IllegalArgumentException if the array would be ragged / the rows are of differing
    *     lengths
    */
-  public Character[][] getTwoDimensionalArray() throws IllegalArgumentException {
-    List<String> linesCleaned = fileLines.stream().filter(i -> !i.isEmpty()).toList();
-    if (linesCleaned.isEmpty()) {
-      throw new IllegalArgumentException("Invalid input: The input cannot be empty");
-    }
-    int rows = linesCleaned.size();
-    int cols = linesCleaned.get(0).length();
-    if (linesCleaned.stream().anyMatch(i -> i.length() != cols)) {
-      throw new IllegalArgumentException(
-          "Invalid input: The input has rows with inconsistent lengths.");
-    }
-    Character[][] array = new Character[rows][cols];
-    for (int i = 0; i < rows; i++) {
-      array[i] = StringTools.ToCharacterArray(linesCleaned.get(i));
-    }
-    return array;
+  public Grid<Character> getGrid() throws IllegalArgumentException {
+    return Grid.fromStringList(fileLines);
   }
 }
