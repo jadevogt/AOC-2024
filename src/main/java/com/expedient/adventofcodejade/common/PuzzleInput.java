@@ -139,13 +139,14 @@ public class PuzzleInput {
      */
     public Character[][] asTwoDimensionalArray() throws RuntimeException {
         var height = fileLines.size();
-        var width = fileLines.get(0).length();
-        if (fileLines.stream().anyMatch(i -> i.length() != width)) {
+        var width = fileLines.get(0).trim().length();
+        var linesCleaned = fileLines.stream().filter(i -> !i.isEmpty()).map(String::trim).toList();
+        if (linesCleaned.stream().anyMatch(i -> i.length() != width)) {
             throw new RuntimeException("The input has rows with inconsistent lengths, so the array would be ragged.");
         }
-        Character[][] block = new Character[width][height];
+        Character[][] block = new Character[height][width];
         for (int i = 0; i < height; i++) {
-            block[i] = StringTools.ToCharacterArray(fileLines.get(i));
+            block[i] = StringTools.ToCharacterArray(linesCleaned.get(i));
         }
         return block;
     }

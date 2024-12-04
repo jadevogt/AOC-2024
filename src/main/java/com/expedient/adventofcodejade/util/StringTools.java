@@ -28,4 +28,14 @@ public class StringTools {
        Pattern p = Pattern.compile(regexPattern);
        return p.matcher(s);
    }
+
+    /**
+     * Convenience method to quickly determine whether a given character is one of many character
+     * @param c the given character
+     * @param charList set of characters to check against
+     * @return whether the character is in the string listing different chars
+     */
+   public static boolean isInString(Character c, String charList) {
+       return charList.contains(c.toString());
+   }
 }
