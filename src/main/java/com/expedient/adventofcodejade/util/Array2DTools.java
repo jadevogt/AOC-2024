@@ -60,12 +60,12 @@ public class Array2DTools {
   }
 
   /**
-   * Returns coordinates to the left & right or up & down from the given center point, respecting
-   * bounds
+   * Returns coordinates to the left and right or up and down from the given center point,
+   * respecting bounds
    *
    * @param center Coordinate of center
    * @param array the 2d array
-   * @param vertical whether to give up & down rather than left & right
+   * @param vertical whether to give up and down rather than left and right
    * @return list of Coordinates adjacent to the center point
    * @param <T> type that makes up the 2d array
    */
