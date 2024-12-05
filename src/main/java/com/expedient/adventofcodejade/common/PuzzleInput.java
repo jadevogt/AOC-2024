@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /** Handles both sample and actual input files */
 public class PuzzleInput {
@@ -58,12 +59,12 @@ public class PuzzleInput {
    * @return PuzzleInput object containing the given day's sample input
    * @throws IOException when the given day's input cannot be found in resources
    */
-  public static PuzzleInput sampleForDay(int day, boolean partOne) throws IOException {
+  public static PuzzleInput sampleForDay(int year, int day, boolean partOne) throws IOException {
     try {
       int suffix = partOne ? 1 : 2;
-      return PuzzleInput.fromResource("samples/%d-%d".formatted(day, suffix));
+      return PuzzleInput.fromResource("samples/%d/%d-%d".formatted(year, day, suffix));
     } catch (IOException e) {
-      return PuzzleInput.fromResource("samples/%d".formatted(day));
+      return PuzzleInput.fromResource("samples/%d/%d".formatted(year, day));
     }
   }
 
@@ -145,5 +146,32 @@ public class PuzzleInput {
    */
   public Grid<Character> getGrid() throws IllegalArgumentException {
     return Grid.fromStringList(fileLines);
+  }
+
+  /**
+   * Converts all starting lines with numbers separated by '|' characters into Pairs of Integers,
+   * then creates a List of Lists containing Integers based on the comma separated lists of numbers
+   * in the second half of the input, separated from the first section by a blank line
+   *
+   * @return A Pair containing the List of Pairs of Integers, as well as the List of Lists of
+   *     Integers
+   */
+  public Pair<List<Pair<Integer, Integer>>, List<List<Integer>>> day5Input() {
+    List<Pair<Integer, Integer>> pairList = new ArrayList<>();
+    List<List<Integer>> intLists = new ArrayList<>();
+    int breakPoint = 0;
+    for (int i = 0; i < fileLines.size(); i++) {
+      if (fileLines.get(i).isBlank()) {
+        breakPoint = i + 1;
+        break;
+      }
+      String[] split = fileLines.get(i).split(("\\|"));
+      pairList.add(new Pair<>(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
+    }
+    for (int i = breakPoint; i < fileLines.size(); i++) {
+      String[] split = fileLines.get(i).split(",");
+      intLists.add(Arrays.stream(split).map(Integer::parseInt).collect(Collectors.toList()));
+    }
+    return new Pair<>(pairList, intLists);
   }
 }

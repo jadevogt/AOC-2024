@@ -5,6 +5,8 @@ import com.expedient.adventofcodejade.util.PrintTools;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Year;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class AdventOfCode {
    *       <li><code>--help</code> - prints help
    *       <li><code>--test</code> - uses sample input
    *       <li><code>--all</code> - prints and runs all solutions
+   *       <li><code>--year=x</code> - prints and runs solutions for year <code>x</code>
    *       <li><code>--day=x</code> - prints and runs solution for day <code>x</code>
    *     </ul>
    */
@@ -32,9 +35,18 @@ public class AdventOfCode {
       PrintTools.printHelp();
       return;
     }
-    List<String> selected = Arrays.stream(args).filter(s -> s.startsWith("--day=")).toList();
-    if (!selected.isEmpty()) {
-      runForDay(selected.get(0), test, loader);
+    List<String> selectedDay = Arrays.stream(args).filter(s -> s.startsWith("--day=")).toList();
+    List<String> selectedYear = Arrays.stream(args).filter(s -> s.startsWith("--year=")).toList();
+    if (!selectedYear.isEmpty() && !selectedDay.isEmpty()) {
+      runForDay(selectedYear.get(0), selectedDay.get(0), test, loader);
+      return;
+    }
+    if (!selectedYear.isEmpty()) {
+      runAllSolutionsForYear(selectedYear.get(0), test, loader);
+      return;
+    }
+    if (!selectedDay.isEmpty()) {
+      runForDay(Integer.toString(Year.now().getValue()), selectedDay.get(0), test, loader);
       return;
     }
     if (Arrays.asList(args).contains("--all")) {
@@ -50,16 +62,20 @@ public class AdventOfCode {
    * @param dayArg selected day
    * @param test whether to use sample input
    */
-  public static void runForDay(String dayArg, boolean test, SolutionLoader loader) {
+  public static void runForDay(String yearArg, String dayArg, boolean test, SolutionLoader loader) {
+    int selectedYear = Integer.parseInt(yearArg.split("=")[1]);
     int selectedDay = Integer.parseInt(dayArg.split("=")[1]);
     try {
-      BaseSolution solution = loader.loadForDay(selectedDay, test);
-      System.out.printf(PrintTools.dayHeader(selectedDay, false));
+      BaseSolution solution = loader.loadForDay(selectedYear, selectedDay, test);
+      System.out.printf(PrintTools.dayHeader(selectedYear, selectedDay, false));
       solution.run(test);
     } catch (ClassNotFoundException e) {
-      System.out.printf("The selected day, %d, does not have a valid solution%n", selectedDay);
+      System.out.printf(
+          "The selected day, %d-%d, does not have a valid solution%n", selectedYear, selectedDay);
     } catch (IOException e) {
-      System.out.printf("The selected day, %d, has no valid input or sample input%n", selectedDay);
+      System.out.printf(
+          "The selected day, %d-%d, has no valid input or sample input%n",
+          selectedYear, selectedDay);
     }
   }
 
@@ -69,10 +85,28 @@ public class AdventOfCode {
    * @param test whether to use sample input
    */
   public static void runLatestSolution(boolean test, SolutionLoader loader) {
-    BaseSolution[] solutions = loader.loadSolutions(test);
-    int last = solutions.length - 1;
-    System.out.printf(PrintTools.dayHeader(last, true));
-    solutions[last].run(test);
+    List<BaseSolution> solutions = new ArrayList<>();
+    int lastYear = 0;
+    for (int year = 2015; year <= 2024; year++) {
+      solutions.addAll(Arrays.stream(loader.loadSolutions(year, test)).toList());
+      lastYear = year;
+    }
+    int lastDay = solutions.size() - 1;
+    System.out.printf(PrintTools.dayHeader(lastYear, lastDay, true));
+    solutions.get(lastDay).run(test);
+  }
+
+  public static void runAllSolutionsForYear(int year, boolean test, SolutionLoader loader) {
+    BaseSolution[] solutions = loader.loadSolutions(year, test);
+    for (int i = 0; i < solutions.length; i++) {
+      System.out.printf(PrintTools.dayHeader(year, i, true));
+      solutions[i].run(test);
+    }
+  }
+
+  public static void runAllSolutionsForYear(String yearInput, boolean test, SolutionLoader loader) {
+    int year = Integer.parseInt(yearInput);
+    runAllSolutionsForYear(year, test, loader);
   }
 
   /**
@@ -81,10 +115,8 @@ public class AdventOfCode {
    * @param test whether to use sample input
    */
   public static void runAllSolutions(boolean test, SolutionLoader loader) {
-    BaseSolution[] solutions = loader.loadSolutions(test);
-    for (int i = 0; i < solutions.length; i++) {
-      System.out.printf(PrintTools.dayHeader(i, true));
-      solutions[i].run(test);
+    for (int year = 2015; year <= 2024; year++) {
+      runAllSolutionsForYear(year, test, loader);
     }
   }
 }

@@ -29,7 +29,7 @@ public class PrintTools {
    * @param isIndex whether the day number is an array index (adds 1 to the visual number)
    * @return the formatted header
    */
-  public static String dayHeader(int day, boolean isIndex) {
-    return formatHeader("Day %d".formatted(isIndex ? day + 1 : day));
+  public static String dayHeader(int year, int day, boolean isIndex) {
+    return formatHeader("Year %d | Day %d".formatted(year, isIndex ? day + 1 : day));
   }
 }

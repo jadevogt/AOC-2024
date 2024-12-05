@@ -35,12 +35,12 @@ public class SolutionLoader {
    * @throws RuntimeException there's some other error with the constructor or something
    * @throws IOException the sample input could not be found
    */
-  public BaseSolution loadForDay(int day, boolean test)
+  public BaseSolution loadForDay(int year, int day, boolean test)
       throws ClassNotFoundException, RuntimeException, IOException {
-    String inputPath = "%s/%d".formatted(inputsDirectory, day);
-    String className = "%s.SolutionDay%d".formatted(solutionsPackage, day);
-    PuzzleInput sampleInputOne = PuzzleInput.sampleForDay(day, true);
-    PuzzleInput sampleInputTwo = PuzzleInput.sampleForDay(day, false);
+    String inputPath = "%s/%d/%d".formatted(inputsDirectory, year, day);
+    String className = "%s.year%d.SolutionDay%d".formatted(solutionsPackage, year, day);
+    PuzzleInput sampleInputOne = PuzzleInput.sampleForDay(year, day, true);
+    PuzzleInput sampleInputTwo = PuzzleInput.sampleForDay(year, day, false);
     PuzzleInput input;
     try {
       input = PuzzleInput.fromPath(inputPath);
@@ -71,11 +71,11 @@ public class SolutionLoader {
    * @return Array of BaseSolution instances
    * @throws RuntimeException Some error was encountered instantiating the classes
    */
-  public BaseSolution[] loadSolutions(boolean test) throws RuntimeException {
+  public BaseSolution[] loadSolutions(int year, boolean test) throws RuntimeException {
     ArrayList<BaseSolution> solutions = new ArrayList<>(25);
     for (int i = 1; i < 26; i++) {
       try {
-        BaseSolution solution = loadForDay(i, test);
+        BaseSolution solution = loadForDay(year, i, test);
         solutions.add(solution);
       } catch (ClassNotFoundException | IOException e) {
         break;

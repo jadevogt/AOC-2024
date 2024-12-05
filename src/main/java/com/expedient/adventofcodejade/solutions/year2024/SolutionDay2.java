@@ -1,4 +1,4 @@
-package com.expedient.adventofcodejade.solutions;
+package com.expedient.adventofcodejade.solutions.year2024;
 
 import static java.lang.Math.abs;
 
