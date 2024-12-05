@@ -78,6 +78,12 @@ public class SolutionDay2 extends BaseSolution {
     return isIncreasing || isDecreasing;
   }
 
+  /**
+   * Check is each line is a good report, and add up the count
+   *
+   * @param inputUsed the PuzzleInput to be used for the solution
+   * @return string containing the number of good reports
+   */
   @Override
   public String partOne(PuzzleInput inputUsed) {
     List<String> lines = inputUsed.getLines();
@@ -91,6 +97,13 @@ public class SolutionDay2 extends BaseSolution {
     return Integer.toString(goodReports);
   }
 
+  /**
+   * Check is each line is a good report, including ones that may be made into good reports by
+   * removing a single entry, then adds up the count
+   *
+   * @param inputUsed the PuzzleInput to be used for the solution
+   * @return string containing the number of good reports
+   */
   @Override
   public String partTwo(PuzzleInput inputUsed) {
     List<String> lines = inputUsed.getLines();

@@ -12,6 +12,13 @@ public class SolutionDay1 extends BaseSolution {
     super(input, sampleInputOne, sampleInputTwo);
   }
 
+  /**
+   * Get two Integer lists, corresponding to each column of the input. Sort both lists. Compare each
+   * item in each list and add up the total distance.
+   *
+   * @param inputUsed the PuzzleInput to be used for the solution
+   * @return string with the total distance between the numbers in each list
+   */
   @Override
   public String partOne(PuzzleInput inputUsed) {
     List<List<Integer>> lists = inputUsed.getTwoLists(Integer::parseInt, "   ");
@@ -26,6 +33,14 @@ public class SolutionDay1 extends BaseSolution {
     return Integer.toString(totalDistance);
   }
 
+  /**
+   * Get two Integer lists, corresponding to each column of the input. Create a third Integer list.
+   * Sort both lists, then populate it with each number in the first list multiplied by the number
+   * of times it appears in the second.
+   *
+   * @param inputUsed the PuzzleInput to be used for the solution
+   * @return the sum of frequencies of the numbers in column 1 in column 2
+   */
   @Override
   public String partTwo(PuzzleInput inputUsed) {
     List<List<Integer>> lists = inputUsed.getTwoLists(Integer::parseInt, "   ");

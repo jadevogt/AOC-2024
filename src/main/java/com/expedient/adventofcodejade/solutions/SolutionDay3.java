@@ -10,6 +10,10 @@ public class SolutionDay3 extends BaseSolution {
     super(input, sampleInputOne, sampleInputTwo);
   }
 
+  /**
+   * @param input the PuzzleInput to be used for the solution
+   * @return
+   */
   @Override
   public String partOne(PuzzleInput input) {
     String regexPattern = "mul\\(\\d{1,3},\\d{1,3}\\)";
