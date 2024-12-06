@@ -20,7 +20,7 @@ public class SolutionDay1 extends BaseSolution {
    * @return string with the total distance between the numbers in each list
    */
   @Override
-  public String partOne(PuzzleInput inputUsed) {
+  public Integer partOne(PuzzleInput inputUsed) {
     List<List<Integer>> lists = inputUsed.getTwoLists(Integer::parseInt, "   ");
     List<Integer> listOne = lists.get(0);
     List<Integer> listTwo = lists.get(1);
@@ -30,7 +30,7 @@ public class SolutionDay1 extends BaseSolution {
     for (int i = 0; i < listOne.size(); i++) {
       totalDistance += Math.abs(listOne.get(i) - listTwo.get(i));
     }
-    return Integer.toString(totalDistance);
+    return totalDistance;
   }
 
   /**
@@ -42,7 +42,7 @@ public class SolutionDay1 extends BaseSolution {
    * @return the sum of frequencies of the numbers in column 1 in column 2
    */
   @Override
-  public String partTwo(PuzzleInput inputUsed) {
+  public Integer partTwo(PuzzleInput inputUsed) {
     List<List<Integer>> lists = inputUsed.getTwoLists(Integer::parseInt, "   ");
     List<Integer> listOne = lists.get(0);
     List<Integer> listTwo = lists.get(1);
@@ -52,6 +52,6 @@ public class SolutionDay1 extends BaseSolution {
     for (int number : listOne) {
       listThree.add(number * Collections.frequency(listTwo, number));
     }
-    return Integer.toString(listThree.stream().reduce(0, Integer::sum));
+    return listThree.stream().reduce(0, Integer::sum);
   }
 }

@@ -85,7 +85,7 @@ public class SolutionDay2 extends BaseSolution {
    * @return string containing the number of good reports
    */
   @Override
-  public String partOne(PuzzleInput inputUsed) {
+  public Integer partOne(PuzzleInput inputUsed) {
     List<String> lines = inputUsed.getLines();
     int goodReports = 0;
     for (String line : lines) {
@@ -94,7 +94,7 @@ public class SolutionDay2 extends BaseSolution {
         goodReports += 1;
       }
     }
-    return Integer.toString(goodReports);
+    return goodReports;
   }
 
   /**
@@ -105,7 +105,7 @@ public class SolutionDay2 extends BaseSolution {
    * @return string containing the number of good reports
    */
   @Override
-  public String partTwo(PuzzleInput inputUsed) {
+  public Integer partTwo(PuzzleInput inputUsed) {
     List<String> lines = inputUsed.getLines();
     int goodReports = 0;
     for (String line : lines) {
@@ -118,6 +118,6 @@ public class SolutionDay2 extends BaseSolution {
         }
       }
     }
-    return Integer.toString(goodReports);
+    return goodReports;
   }
 }

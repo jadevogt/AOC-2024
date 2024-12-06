@@ -87,13 +87,15 @@ public class AdventOfCode {
   public static void runLatestSolution(boolean test, SolutionLoader loader) {
     List<BaseSolution> solutions = new ArrayList<>();
     int lastYear = 0;
+    int lastDay = 0;
     for (int year = 2015; year <= 2024; year++) {
-      solutions.addAll(Arrays.stream(loader.loadSolutions(year, test)).toList());
+      List<BaseSolution> yearSolutions = Arrays.stream(loader.loadSolutions(year, test)).toList();
+      solutions.addAll(yearSolutions);
+      lastDay = yearSolutions.size();
       lastYear = year;
     }
-    int lastDay = solutions.size() - 1;
-    System.out.printf(PrintTools.dayHeader(lastYear, lastDay, true));
-    solutions.get(lastDay).run(test);
+    System.out.printf(PrintTools.dayHeader(lastYear, lastDay, false));
+    solutions.get(solutions.size() - 1).run(test);
   }
 
   public static void runAllSolutionsForYear(int year, boolean test, SolutionLoader loader) {
@@ -105,7 +107,7 @@ public class AdventOfCode {
   }
 
   public static void runAllSolutionsForYear(String yearInput, boolean test, SolutionLoader loader) {
-    int year = Integer.parseInt(yearInput);
+    int year = Integer.parseInt(yearInput.split("=")[1]);
     runAllSolutionsForYear(year, test, loader);
   }
 

@@ -48,7 +48,7 @@ public abstract class BaseSolution {
    * @param input the PuzzleInput to be used for the solution
    * @return output of this part of the solution
    */
-  public abstract String partOne(PuzzleInput input);
+  public abstract Object partOne(PuzzleInput input);
 
   /**
    * Logic for part two of the solution. Must be overridden when implementing the solution.
@@ -56,5 +56,5 @@ public abstract class BaseSolution {
    * @param input the PuzzleInput to be used for the solution
    * @return output of this part of the solution
    */
-  public abstract String partTwo(PuzzleInput input);
+  public abstract Object partTwo(PuzzleInput input);
 }

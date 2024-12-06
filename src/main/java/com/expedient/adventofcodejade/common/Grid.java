@@ -33,6 +33,19 @@ public class Grid<T> {
     return array[0].length;
   }
 
+  /**
+   * Returns false if the given coordinate would be out of bounds
+   *
+   * @param location a coordinate
+   * @return false if oob
+   */
+  public boolean isSafe(Coordinate location) {
+    return location.row() >= 0
+        && location.row() < rowCount()
+        && location.col() >= 0
+        && location.col() < colCount();
+  }
+
   public static Grid<Character> fromStringList(List<String> lines) {
     List<String> linesCleaned = lines.stream().filter(i -> !i.isEmpty()).toList();
     if (linesCleaned.isEmpty()) {

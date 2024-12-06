@@ -15,7 +15,7 @@ public class SolutionDay3 extends BaseSolution {
    * @return
    */
   @Override
-  public String partOne(PuzzleInput input) {
+  public Integer partOne(PuzzleInput input) {
     String regexPattern = "mul\\(\\d{1,3},\\d{1,3}\\)";
     Matcher m = StringTools.getMatcher(input.getString(), regexPattern);
     int total = 0;
@@ -25,11 +25,11 @@ public class SolutionDay3 extends BaseSolution {
       int mul2 = Integer.parseInt(g.split(",")[1].replace(")", ""));
       total += mul1 * mul2;
     }
-    return Integer.toString(total);
+    return total;
   }
 
   @Override
-  public String partTwo(PuzzleInput input) {
+  public Integer partTwo(PuzzleInput input) {
     String regexPattern = "(mul\\(\\d{1,3},\\d{1,3}\\))|(do\\(\\))|(don't\\(\\))";
     Matcher m = StringTools.getMatcher(input.getString(), regexPattern);
     int total = 0;
@@ -50,6 +50,6 @@ public class SolutionDay3 extends BaseSolution {
         total += mul1 * mul2;
       }
     }
-    return Integer.toString(total);
+    return total;
   }
 }

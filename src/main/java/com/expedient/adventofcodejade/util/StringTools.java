@@ -1,5 +1,6 @@
 package com.expedient.adventofcodejade.util;
 
+import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,5 +41,10 @@ public class StringTools {
    */
   public static boolean isInString(Character c, String charList) {
     return charList.contains(c.toString());
+  }
+
+  public static String toHex(byte[] bytes) {
+    BigInteger bi = new BigInteger(1, bytes);
+    return String.format("%0" + (bytes.length << 1) + "X", bi);
   }
 }

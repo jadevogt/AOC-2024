@@ -17,10 +17,10 @@ public class SolutionDay4 extends BaseSolution {
    * full occurrence.
    *
    * @param input the PuzzleInput to be used for the solution
-   * @return string with the number of times that XMAS was found in the input
+   * @return the number of times that XMAS was found in the input
    */
   @Override
-  public String partOne(PuzzleInput input) {
+  public Integer partOne(PuzzleInput input) {
     Grid<Character> wordSearch = input.getGrid();
     List<Coordinate> starts = wordSearch.matchCoordinates(i -> i == 'X');
     int count = 0;
@@ -39,7 +39,7 @@ public class SolutionDay4 extends BaseSolution {
         }
       }
     }
-    return Integer.toString(count);
+    return count;
   }
 
   /**
@@ -48,10 +48,10 @@ public class SolutionDay4 extends BaseSolution {
    * are two 'MAS' sequences, add to the count.
    *
    * @param input the PuzzleInput to be used for the solution
-   * @return string with the number of times X-MASes were found in the input
+   * @return the number of times X-MASes were found in the input
    */
   @Override
-  public String partTwo(PuzzleInput input) {
+  public Integer partTwo(PuzzleInput input) {
     Grid<Character> wordSearch = input.getGrid();
     List<Coordinate> starts = wordSearch.matchCoordinates(i -> i == 'A');
     int count = 0;
@@ -73,6 +73,6 @@ public class SolutionDay4 extends BaseSolution {
         }
       }
     }
-    return Integer.toString(count);
+    return count;
   }
 }
