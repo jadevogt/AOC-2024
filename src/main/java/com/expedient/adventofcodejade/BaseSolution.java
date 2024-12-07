@@ -2,6 +2,9 @@ package com.expedient.adventofcodejade;
 
 import com.expedient.adventofcodejade.common.PuzzleInput;
 
+import java.time.Duration;
+import java.time.Instant;
+
 /**
  * Base class for all Solutions. Provides input, sample input, and methods to run part one and part
  * two.
@@ -36,10 +39,26 @@ public abstract class BaseSolution {
    *
    * @param test whether to use test inputs
    */
-  public void run(boolean test) {
+  public void run(boolean test, boolean metrics) {
     String pfx = test ? "output (sample)" : "output";
-    System.out.printf("Part one %s: %s%n", pfx, partOne(getInput(test, true)));
-    System.out.printf("Part two %s: %s%n", pfx, partTwo(getInput(test, false)));
+    Instant startOne = Instant.now();
+    var partOneSolution = partOne(getInput(test, true));
+    Instant endOne = Instant.now();
+    if (!metrics) {
+      System.out.printf("Part one %s: %s%n", pfx, partOneSolution);
+    } else {
+      var time = Duration.between(startOne, endOne);
+      System.out.printf("Part one %s: %s (took %s)%n", pfx, partOneSolution, time);
+    }
+    Instant startTwo = Instant.now();
+    var partTwoSolution = partTwo(getInput(test, false));
+    Instant endTwo = Instant.now();
+    if (!metrics) {
+      System.out.printf("Part one %s: %s%n", pfx, partTwoSolution);
+    } else {
+      var time = Duration.between(startTwo, endTwo);
+      System.out.printf("Part one %s: %s (took %s)%n", pfx, partTwoSolution, time);
+    }
   }
 
   /**
