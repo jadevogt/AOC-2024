@@ -11,20 +11,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.expedient.adventofcodejade.util.NumTools.fastCat;
+
 public class SolutionDay7 extends BaseSolution {
   public SolutionDay7(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
     super(input, sampleInputOne, sampleInputTwo);
-  }
-
-  /**
-   * Takes two Longs and returns a new Long that is the result of concatenating them together
-   *
-   * @param one the first Long
-   * @param two the second Long
-   * @return a new Long that is the result of concatenating the two given as if they were Strings
-   */
-  public static Long catLong(Long one, Long two) {
-    return Long.parseLong(one.toString() + two.toString());
   }
 
   /**
@@ -45,7 +36,7 @@ public class SolutionDay7 extends BaseSolution {
           .filter(n -> n <= target)
           .collect(Collectors.toSet());
     return nums.stream()
-        .flatMap(n -> Stream.of(n * nextOperand, n + nextOperand, catLong(n, nextOperand)))
+        .flatMap(n -> Stream.of(n * nextOperand, n + nextOperand, fastCat(n, nextOperand)))
         .filter(n -> n <= target)
         .collect(Collectors.toSet());
   }

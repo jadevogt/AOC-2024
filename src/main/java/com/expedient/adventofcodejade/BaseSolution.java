@@ -54,10 +54,10 @@ public abstract class BaseSolution {
     var partTwoSolution = partTwo(getInput(test, false));
     Instant endTwo = Instant.now();
     if (!metrics) {
-      System.out.printf("Part one %s: %s%n", pfx, partTwoSolution);
+      System.out.printf("Part two %s: %s%n", pfx, partTwoSolution);
     } else {
       var time = Duration.between(startTwo, endTwo);
-      System.out.printf("Part one %s: %s (took %s)%n", pfx, partTwoSolution, time);
+      System.out.printf("Part two %s: %s (took %s)%n", pfx, partTwoSolution, time);
     }
   }
 
