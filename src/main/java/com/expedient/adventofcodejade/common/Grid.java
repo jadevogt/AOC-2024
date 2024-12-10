@@ -3,7 +3,9 @@ package com.expedient.adventofcodejade.common;
 import com.expedient.adventofcodejade.util.StringTools;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -266,6 +268,44 @@ public class Grid<T> {
     List<Coordinate> coords = safeNeighborCoordinates(center, true);
     coords.forEach(c -> floodFill(c, test, transformation));
     return this;
+  }
+
+  /**
+   * @param grid
+   * @param center
+   * @param currentStep
+   * @return
+   */
+  public static int findTrailStepUnique(
+      Grid<Character> grid, Coordinate center, final int currentStep) {
+    if (grid.at(center) == '9') {
+      return 1;
+    }
+    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
+    candidates =
+        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
+    int total = 0;
+    for (Coordinate candidate : candidates) {
+      total += findTrailStepUnique(grid, candidate, currentStep + 1);
+    }
+    return total;
+  }
+
+  public static Set<Coordinate> findTrailStepScore(
+      Grid<Character> grid, Coordinate center, final int currentStep) {
+    if (grid.at(center) == '9') {
+      Set<Coordinate> endpoints = new HashSet<>();
+      endpoints.add(center);
+      return endpoints;
+    }
+    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
+    candidates =
+        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
+    Set<Coordinate> endpoints = new HashSet<>();
+    for (Coordinate candidate : candidates) {
+      endpoints.addAll(findTrailStepScore(grid, candidate, currentStep + 1));
+    }
+    return endpoints;
   }
 
   /** Prints the 2D array to stdout */
