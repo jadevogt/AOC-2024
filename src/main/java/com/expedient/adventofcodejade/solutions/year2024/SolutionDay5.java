@@ -3,7 +3,6 @@ package com.expedient.adventofcodejade.solutions.year2024;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Pair;
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
 import java.util.*;
 
 public class SolutionDay5 extends BaseSolution {
@@ -35,34 +34,6 @@ public class SolutionDay5 extends BaseSolution {
       ruleLists.get(after).one().add(number);
     }
     return ruleLists;
-  }
-
-  /**
-   * Class that uses Rules (Map of Integer keys and a Pair of Integer sets) to provide a comparison
-   * method that can be used to sort a list of Integers according to the Rules
-   *
-   * @param rules
-   */
-  private record UpdateComparator(Map<Integer, Pair<Set<Integer>, Set<Integer>>> rules)
-      implements Comparator<Integer> {
-
-    @Override
-    public int compare(Integer o1, Integer o2) {
-      if (rules.containsKey(o1)) {
-        if (rules.get(o1).two().contains(o2)) {
-          return -1;
-        } else if (rules.get(o1).one().contains(o2)) {
-          return 1;
-        }
-      } else if (rules.containsKey(o2)) {
-        if (rules.get(o2).two().contains(o1)) {
-          return 1;
-        } else if (rules.get(o2).one().contains(o1)) {
-          return -1;
-        }
-      }
-      return 0;
-    }
   }
 
   /**
@@ -111,5 +82,33 @@ public class SolutionDay5 extends BaseSolution {
         .map(i -> i.get(i.size() / 2))
         .reduce(Integer::sum)
         .orElseThrow(IllegalArgumentException::new);
+  }
+
+  /**
+   * Class that uses Rules (Map of Integer keys and a Pair of Integer sets) to provide a comparison
+   * method that can be used to sort a list of Integers according to the Rules
+   *
+   * @param rules
+   */
+  private record UpdateComparator(Map<Integer, Pair<Set<Integer>, Set<Integer>>> rules)
+      implements Comparator<Integer> {
+
+    @Override
+    public int compare(Integer o1, Integer o2) {
+      if (rules.containsKey(o1)) {
+        if (rules.get(o1).two().contains(o2)) {
+          return -1;
+        } else if (rules.get(o1).one().contains(o2)) {
+          return 1;
+        }
+      } else if (rules.containsKey(o2)) {
+        if (rules.get(o2).two().contains(o1)) {
+          return 1;
+        } else if (rules.get(o2).one().contains(o1)) {
+          return -1;
+        }
+      }
+      return 0;
+    }
   }
 }

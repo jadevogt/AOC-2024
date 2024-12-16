@@ -2,8 +2,6 @@ package com.expedient.adventofcodejade.solutions.year2015;
 
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SolutionDay5 extends BaseSolution {

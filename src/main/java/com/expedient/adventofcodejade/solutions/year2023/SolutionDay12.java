@@ -4,7 +4,6 @@ import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Pair;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

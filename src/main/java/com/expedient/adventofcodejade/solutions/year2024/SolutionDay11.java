@@ -2,7 +2,6 @@ package com.expedient.adventofcodejade.solutions.year2024;
 
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
 import java.util.*;
 
 public class SolutionDay11 extends BaseSolution {

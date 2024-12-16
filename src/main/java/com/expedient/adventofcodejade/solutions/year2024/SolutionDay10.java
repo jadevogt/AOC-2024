@@ -3,7 +3,6 @@ package com.expedient.adventofcodejade.solutions.year2024;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Grid;
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
 import java.util.Set;
 
 public class SolutionDay10 extends BaseSolution {

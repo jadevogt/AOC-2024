@@ -53,4 +53,24 @@ public class NumTools {
     while (two >= POWERS_OF_TEN_LONG[power]) power++;
     return POWERS_OF_TEN_LONG[power] * one + two;
   }
+
+  /**
+   * Use <a href="https://www.intmath.com/matrices-determinants/1-determinants.php">Cramer's
+   * Rule</a> to solve a 2x2 system of equations with determinants, providing a set of values for x
+   * and y that satisfies the given equations
+   *
+   * @param coefficientsA the coefficients a1 and a2
+   * @param coefficientsB the coefficients b1 and b2
+   * @param constantsC the constants on the other side of the equals sign
+   * @return an array containing a value for x and y that satisfies both equations
+   */
+  public static long[] solveSystemOfEquations(
+      long[] coefficientsA, long[] coefficientsB, long[] constantsC) {
+    long[] a = coefficientsA;
+    long[] b = coefficientsB;
+    long[] c = constantsC;
+    long x = (c[0] * b[1] - c[1] * b[0]) / ((a[0] * b[1]) - (a[1] * b[0]));
+    long y = (a[0] * c[1] - a[1] * c[0]) / ((a[0] * b[1]) - (a[1] * b[0]));
+    return new long[] {x, y};
+  }
 }

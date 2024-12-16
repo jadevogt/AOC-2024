@@ -4,7 +4,6 @@ import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Pair;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.util.*;
 
 public class SolutionDay9 extends BaseSolution {
@@ -73,12 +72,6 @@ public class SolutionDay9 extends BaseSolution {
     }
   }
 
-  public static record File(Integer fileStart, Integer fileEnd, Integer fileId) {
-    public int length() {
-      return fileEnd - fileStart + 1;
-    }
-  }
-
   public static void OverwriteNextNullWithFile(
       FileSystemBlock[] fileSystem, int fileLength, int fileId, int fileEnd) {
     for (int i = 0; i < fileSystem.length - fileLength; i++) {
@@ -134,8 +127,6 @@ public class SolutionDay9 extends BaseSolution {
     }
   }
 
-  public static record FileSystemBlock(Integer fileId, boolean moved) {}
-
   @Override
   public Object partOne(PuzzleInput input) {
     var fsAndFiles = buildFileSystem(input);
@@ -154,4 +145,12 @@ public class SolutionDay9 extends BaseSolution {
     SortFileSystemByFile(fs, files);
     return calculateCheckSum(fs);
   }
+
+  public static record File(Integer fileStart, Integer fileEnd, Integer fileId) {
+    public int length() {
+      return fileEnd - fileStart + 1;
+    }
+  }
+
+  public static record FileSystemBlock(Integer fileId, boolean moved) {}
 }

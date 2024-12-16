@@ -4,7 +4,6 @@ import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Coordinate;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.util.HashMap;
 import java.util.Map;
 

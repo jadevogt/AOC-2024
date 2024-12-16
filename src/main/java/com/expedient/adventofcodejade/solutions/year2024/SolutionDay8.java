@@ -5,13 +5,27 @@ import com.expedient.adventofcodejade.common.Coordinate;
 import com.expedient.adventofcodejade.common.Grid;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.common.Vector2;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SolutionDay8 extends BaseSolution {
   public SolutionDay8(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
     super(input, sampleInputOne, sampleInputTwo);
+  }
+
+  /**
+   * Finds each type of antenna on the given input Grid, as well as the Coordinate for each antenna
+   * of each kind
+   *
+   * @param grid the input Grid
+   * @return Map of Lists of Coordinate per Character antenna type
+   */
+  public static Map<Character, List<Coordinate>> getAntennaLists(Grid<Character> grid) {
+    return grid.matchCoordinates(i -> i != '.').stream()
+        .map(grid::at)
+        .collect(Collectors.toSet())
+        .stream()
+        .collect(Collectors.toMap(i -> i, x -> grid.matchCoordinates(i -> i == x)));
   }
 
   /**
@@ -49,21 +63,6 @@ public class SolutionDay8 extends BaseSolution {
         .flatMap(i -> antiNodes.get(i).stream())
         .collect(Collectors.toSet())
         .size();
-  }
-
-  /**
-   * Finds each type of antenna on the given input Grid, as well as the Coordinate for each antenna
-   * of each kind
-   *
-   * @param grid the input Grid
-   * @return Map of Lists of Coordinate per Character antenna type
-   */
-  public static Map<Character, List<Coordinate>> getAntennaLists(Grid<Character> grid) {
-    return grid.matchCoordinates(i -> i != '.').stream()
-        .map(grid::at)
-        .collect(Collectors.toSet())
-        .stream()
-        .collect(Collectors.toMap(i -> i, x -> grid.matchCoordinates(i -> i == x)));
   }
 
   @Override

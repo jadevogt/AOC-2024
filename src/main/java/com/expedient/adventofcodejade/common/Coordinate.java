@@ -90,4 +90,36 @@ public record Coordinate(int row, int col) {
     int colDist = col() - other.col();
     return Math.sqrt(Math.pow(rowDist, 2) + Math.pow(colDist, 2));
   }
+
+  public Coordinate topLeft() {
+    return new Coordinate(row - 1, col - 1);
+  }
+
+  public Coordinate topCenter() {
+    return new Coordinate(row - 1, col);
+  }
+
+  public Coordinate topRight() {
+    return new Coordinate(row - 1, col + 1);
+  }
+
+  public Coordinate centerRight() {
+    return new Coordinate(row, col + 1);
+  }
+
+  public Coordinate bottomRight() {
+    return new Coordinate(row + 1, col + 1);
+  }
+
+  public Coordinate bottomCenter() {
+    return new Coordinate(row + 1, col);
+  }
+
+  public Coordinate bottomLeft() {
+    return new Coordinate(row + 1, col - 1);
+  }
+
+  public Coordinate centerLeft() {
+    return new Coordinate(row, col - 1);
+  }
 }

@@ -10,6 +10,7 @@ public record Vector2(int rowDiff, int colDiff) {
   public Vector2(Coordinate one, Coordinate two) {
     this(one.row() - two.row(), one.col() - two.col());
   }
+  
 
   /**
    * Reverses the direction of the Vector2
@@ -38,5 +39,15 @@ public record Vector2(int rowDiff, int colDiff) {
    */
   public Coordinate apply(Coordinate src) {
     return new Coordinate(src.row() + rowDiff(), src.col() + colDiff());
+  }
+
+  public Coordinate applyWithWraparound(Coordinate src, int rowCount, int colCount) {
+    int newRow = (src.row() + rowDiff());
+    int newCol = (src.col() + colDiff());
+    newRow = newRow % rowCount;
+    newCol = newCol % colCount;
+    newRow = newRow < 0 ? newRow + rowCount : newRow;
+    newCol = newCol < 0 ? newCol + colCount : newCol;
+    return new Coordinate(newRow, newCol);
   }
 }

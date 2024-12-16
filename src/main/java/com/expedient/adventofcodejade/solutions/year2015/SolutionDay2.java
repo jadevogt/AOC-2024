@@ -3,9 +3,7 @@ package com.expedient.adventofcodejade.solutions.year2015;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.common.RectangularPrism;
-
 import java.util.Arrays;
-import java.util.List;
 
 public class SolutionDay2 extends BaseSolution {
   public SolutionDay2(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {

@@ -1,7 +1,6 @@
 package com.expedient.adventofcodejade;
 
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
 import java.time.Duration;
 import java.time.Instant;
 

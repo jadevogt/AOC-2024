@@ -3,7 +3,6 @@ package com.expedient.adventofcodejade.solutions.year2015;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

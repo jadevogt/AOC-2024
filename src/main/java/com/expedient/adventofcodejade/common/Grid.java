@@ -1,7 +1,6 @@
 package com.expedient.adventofcodejade.common;
 
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +14,62 @@ public class Grid<T> {
 
   private Grid(T[][] array) {
     this.array = array;
+  }
+
+  public static Grid<Character> fromStringList(List<String> lines) {
+    List<String> linesCleaned = lines.stream().filter(i -> !i.isEmpty()).toList();
+    if (linesCleaned.isEmpty()) {
+      throw new IllegalArgumentException("Invalid input: The input cannot be empty");
+    }
+    int rows = linesCleaned.size();
+    int cols = linesCleaned.get(0).length();
+    if (linesCleaned.stream().anyMatch(i -> i.length() != cols)) {
+      throw new IllegalArgumentException(
+          "Invalid input: The input has rows with inconsistent lengths.");
+    }
+    Character[][] array = new Character[rows][cols];
+    for (int i = 0; i < rows; i++) {
+      array[i] = StringTools.ToCharacterArray(linesCleaned.get(i));
+    }
+    return new Grid<>(array);
+  }
+
+  /**
+   * @param grid
+   * @param center
+   * @param currentStep
+   * @return
+   */
+  public static int findTrailStepUnique(
+      Grid<Character> grid, Coordinate center, final int currentStep) {
+    if (grid.at(center) == '9') {
+      return 1;
+    }
+    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
+    candidates =
+        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
+    int total = 0;
+    for (Coordinate candidate : candidates) {
+      total += findTrailStepUnique(grid, candidate, currentStep + 1);
+    }
+    return total;
+  }
+
+  public static Set<Coordinate> findTrailStepScore(
+      Grid<Character> grid, Coordinate center, final int currentStep) {
+    if (grid.at(center) == '9') {
+      Set<Coordinate> endpoints = new HashSet<>();
+      endpoints.add(center);
+      return endpoints;
+    }
+    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
+    candidates =
+        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
+    Set<Coordinate> endpoints = new HashSet<>();
+    for (Coordinate candidate : candidates) {
+      endpoints.addAll(findTrailStepScore(grid, candidate, currentStep + 1));
+    }
+    return endpoints;
   }
 
   /**
@@ -46,24 +101,6 @@ public class Grid<T> {
         && location.row() < rowCount()
         && location.col() >= 0
         && location.col() < colCount();
-  }
-
-  public static Grid<Character> fromStringList(List<String> lines) {
-    List<String> linesCleaned = lines.stream().filter(i -> !i.isEmpty()).toList();
-    if (linesCleaned.isEmpty()) {
-      throw new IllegalArgumentException("Invalid input: The input cannot be empty");
-    }
-    int rows = linesCleaned.size();
-    int cols = linesCleaned.get(0).length();
-    if (linesCleaned.stream().anyMatch(i -> i.length() != cols)) {
-      throw new IllegalArgumentException(
-          "Invalid input: The input has rows with inconsistent lengths.");
-    }
-    Character[][] array = new Character[rows][cols];
-    for (int i = 0; i < rows; i++) {
-      array[i] = StringTools.ToCharacterArray(linesCleaned.get(i));
-    }
-    return new Grid<>(array);
   }
 
   /**
@@ -118,6 +155,15 @@ public class Grid<T> {
   }
 
   /**
+   * Sets the backing array for the Grid
+   *
+   * @param newArray 2D array
+   */
+  public void setArray(T[][] newArray) {
+    array = newArray;
+  }
+
+  /**
    * Returns a deep copy of the backing array for the Grid
    *
    * @return deep copy of the 2D backing array
@@ -131,12 +177,48 @@ public class Grid<T> {
   }
 
   /**
-   * Sets the backing array for the Grid
+   * Given a coordinate and a test, determines whether the given coordinate represents a "corner" of
+   * a contiguous area of coordinates that pass the test, and if so, how many
    *
-   * @param newArray 2D array
+   * @param center the given coordinate
+   * @param test a test that determines whether a coordinate is part of the area
+   * @return the number of "corners" the given coordinate represents
    */
-  public void setArray(T[][] newArray) {
-    array = newArray;
+  public int checkCorner(Coordinate center, Predicate<T> test) {
+    int corners = 0;
+    boolean topLeft = !isSafe(center.topLeft()) || !test.test(at(center.topLeft()));
+    boolean topRight = !isSafe(center.topRight()) || !test.test(at(center.topRight()));
+    boolean bottomLeft = !isSafe(center.bottomLeft()) || !test.test(at(center.bottomLeft()));
+    boolean bottomRight = !isSafe(center.bottomRight()) || !test.test(at(center.bottomRight()));
+    boolean centerLeft = !isSafe(center.centerLeft()) || !test.test(at(center.centerLeft()));
+    boolean centerRight = !isSafe(center.centerRight()) || !test.test(at(center.centerRight()));
+    boolean topCenter = !isSafe(center.topCenter()) || !test.test(at(center.topCenter()));
+    boolean bottomCenter = !isSafe(center.bottomCenter()) || !test.test(at(center.bottomCenter()));
+    if (centerLeft && topCenter) {
+      corners++;
+    }
+    if (centerLeft && bottomCenter) {
+      corners++;
+    }
+    if (centerRight && topCenter) {
+      corners++;
+    }
+    if (centerRight && bottomCenter) {
+      corners++;
+    }
+    if (bottomRight && !(centerRight || bottomCenter)) {
+      corners++;
+    }
+    if (bottomLeft && !(centerLeft || bottomCenter)) {
+      corners++;
+    }
+    if (topLeft && !(centerLeft || topCenter)) {
+      corners++;
+    }
+    if (topRight && !(centerRight || topCenter)) {
+      corners++;
+    }
+    return corners;
   }
 
   /**
@@ -271,41 +353,97 @@ public class Grid<T> {
   }
 
   /**
-   * @param grid
-   * @param center
-   * @param currentStep
-   * @return
+   * Finds the perimeter of the contiguous region that includes the given coordinate center.
+   *
+   * @param center the coordinate from which to calculate the contiguous region's perimeter
+   * @param test a test to determine whether a coordinate is part of the region
+   * @param prev a set of coordinates that already have been checked. may be null.
+   * @return the perimeter of the contiguous region
    */
-  public static int findTrailStepUnique(
-      Grid<Character> grid, Coordinate center, final int currentStep) {
-    if (grid.at(center) == '9') {
-      return 1;
-    }
-    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
-    candidates =
-        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
+  public Integer findContiguousRegionPerimeter(
+      Coordinate center, Predicate<T> test, Set<Coordinate> prev) {
     int total = 0;
-    for (Coordinate candidate : candidates) {
-      total += findTrailStepUnique(grid, candidate, currentStep + 1);
+    if (prev == null) {
+      prev = new HashSet<>();
+    }
+    if (!test.test(at(center))) {
+      return total;
+    }
+    List<Coordinate> coords = safeNeighborCoordinates(center, true);
+    // add one perimeter for each neighbor outside the grid
+    total += 4 - coords.size();
+    prev.add(center);
+    for (Coordinate coordinate : coords) {
+      if (!test.test(at(coordinate))) {
+        total += 1;
+      } else {
+        if (!prev.contains(coordinate))
+          total += findContiguousRegionPerimeter(coordinate, test, prev);
+      }
     }
     return total;
   }
 
-  public static Set<Coordinate> findTrailStepScore(
-      Grid<Character> grid, Coordinate center, final int currentStep) {
-    if (grid.at(center) == '9') {
-      Set<Coordinate> endpoints = new HashSet<>();
-      endpoints.add(center);
-      return endpoints;
+  /**
+   * Finds the number of sides of the contiguous region that includes the given coordinate center.
+   * The calculation takes advantage of the fact that any given polygon has the same number of sides
+   * as it has corners, so we don't have to worry about maintaining state or awareness of sides, and
+   * can instead check neighboring coordinates to see if each coordinate is a corner.
+   *
+   * @param center the coordinate from which to calculate the contiguous region's side count
+   * @param test a test to determine whether a coordinate is part of the region
+   * @param prev a set of coordinates that already have been checked. may be null.
+   * @return the number of sides of the contiguous region
+   */
+  public Integer findContiguousRegionSides(
+      Coordinate center, Predicate<T> test, Set<Coordinate> prev) {
+    int total = 0;
+    if (!test.test(at(center))) {
+      return total;
     }
-    List<Coordinate> candidates = grid.safeNeighborCoordinates(center, true);
-    candidates =
-        candidates.stream().filter(i -> grid.at(i) == (char) ('0' + currentStep + 1)).toList();
-    Set<Coordinate> endpoints = new HashSet<>();
-    for (Coordinate candidate : candidates) {
-      endpoints.addAll(findTrailStepScore(grid, candidate, currentStep + 1));
+    if (prev == null) {
+      prev = new HashSet<>();
     }
-    return endpoints;
+
+    // List<Coordinate> coords = safeNeighborCoordinates(center, true);
+    // add one perimeter for each neighbor outside the grid
+    List<Coordinate> coords = safeNeighborCoordinates(center, true);
+    total += checkCorner(center, test);
+    prev.add(center);
+    for (Coordinate coordinate : coords) {
+      if (test.test(at(coordinate))) {
+        if (!prev.contains(coordinate)) total += findContiguousRegionSides(coordinate, test, prev);
+      }
+    }
+    return total;
+  }
+
+  /**
+   * Finds the number of coordinates in a contiguous area, defined by whether coordinates pass the
+   * given test
+   *
+   * @param center the coordinate from which to calculate the contiguous region's area
+   * @param test a test to determine whether a coordinate is part of the region
+   * @param prev a set of coordinates that already have been checked. may be null.
+   * @return the area of the contiguous region
+   */
+  public Integer findContiguousRegionArea(
+      Coordinate center, Predicate<T> test, Set<Coordinate> prev) {
+    if (!test.test(at(center))) {
+      return 0;
+    }
+    int total = 1;
+    if (prev == null) {
+      prev = new HashSet<>();
+    }
+    List<Coordinate> coords = safeNeighborCoordinates(center, true);
+    prev.add(center);
+    for (Coordinate coordinate : coords) {
+      if (!prev.contains(coordinate)) {
+        total += findContiguousRegionArea(coordinate, test, prev);
+      }
+    }
+    return total;
   }
 
   /** Prints the 2D array to stdout */

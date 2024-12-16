@@ -3,7 +3,6 @@ package com.expedient.adventofcodejade.solutions.year2024;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.*;
 import com.expedient.adventofcodejade.util.StringTools;
-
 import java.util.HashSet;
 import java.util.Set;
 

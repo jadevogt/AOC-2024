@@ -1,17 +1,16 @@
 package com.expedient.adventofcodejade.solutions.year2024;
 
+import static com.expedient.adventofcodejade.util.NumTools.fastCat;
+
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Pair;
 import com.expedient.adventofcodejade.common.PuzzleInput;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.expedient.adventofcodejade.util.NumTools.fastCat;
 
 public class SolutionDay7 extends BaseSolution {
   public SolutionDay7(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
