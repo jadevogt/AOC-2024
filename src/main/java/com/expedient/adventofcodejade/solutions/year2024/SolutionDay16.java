@@ -146,43 +146,101 @@ public class SolutionDay16 extends BaseSolution {
       }
     }
 
-    // pathTaken.add(startPoint);
-
     Direction cd = Direction.RIGHT;
     int total = 0;
     for (var p : pathTaken) {
       if (p.two() != cd) {
-        // System.out.println("SWITCHING DIRECTION FROM " + cd + " TO " + p.two());
         total += 1000;
         cd = p.two();
       }
       total++;
     }
-
-    /*
-    grid.print(
-        i -> {
-          if (pathTaken.stream().anyMatch(p -> p.one().equals(i))) {
-            var q = pathTaken.stream().filter(p -> p.one().equals(i)).findFirst();
-            return switch (q.get().two()) {
-              case UP -> '^';
-              case DOWN -> 'v';
-              case LEFT -> '<';
-              case RIGHT -> '>';
-            };
-          }
-          if (grid.at(i) == '#') {
-            return '█';
-          }
-          return grid.at(i) == '.' ? ' ' : grid.at(i);
-        });
-
-     */
     return total;
   }
 
   @Override
   public Object partTwo(PuzzleInput input) {
-    return null;
+    Grid<Character> grid = Grid.fromStringList(input.getLines());
+    Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
+    Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
+    List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
+    HashSet<Pair<Coordinate, Direction>> visited = new HashSet<>();
+    Queue<Triplet<Coordinate, Integer, Direction>> queue =
+        new PriorityQueue<>(new NeighborComparator());
+
+    HashMap<Pair<Coordinate, Direction>, Integer> distance = new HashMap<>();
+    var mazeCoords = grid.matchCoordinates(SolutionDay16::isTraversable);
+    for (var c : mazeCoords) {
+      if (c.equals(startPoint)) {
+        distance.put(new Pair<>(startPoint, Direction.RIGHT), 0);
+      } else {
+        for (Direction d :
+            Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList())
+          distance.put(new Pair<>(c, d), Integer.MAX_VALUE / 2);
+      }
+    }
+
+    Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous = new HashMap<>();
+    for (var c : mazeCoords) {
+      for (Direction d :
+          Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
+        previous.put(new Pair<>(c, d), new ArrayList<>());
+      }
+    }
+
+    Coordinate currentPosition;
+    Direction currentDirection;
+    queue.add(new Triplet<>(startPoint, 0, Direction.RIGHT));
+    while (!queue.isEmpty()) {
+      var current = queue.poll();
+      currentPosition = current.one();
+      currentDirection = current.three();
+      int queuedDistance = current.two();
+      if (queuedDistance > distance.get(new Pair<>(currentPosition, currentDirection))) {
+        continue;
+      }
+      var neighbors = getNeighbors(grid, currentPosition, currentDirection, visited);
+      for (var neighbor : neighbors.keySet()) {
+        if (neighbor.equals(startPoint)) continue;
+        Direction newDirection = directionFromTwoCoordinates(currentPosition, neighbor);
+        int newDistance =
+            distance.get(new Pair<>(currentPosition, currentDirection)) + neighbors.get(neighbor);
+        if (newDistance <= distance.get(new Pair<>(neighbor, newDirection))) {
+          if (newDistance < distance.get(new Pair<>(neighbor, newDirection))) {
+            distance.put(new Pair<>(neighbor, newDirection), newDistance);
+            previous.put(new Pair<>(neighbor, newDirection), new ArrayList<>());
+          }
+          var list = previous.get(new Pair<>(neighbor, newDirection));
+          list.add(new Pair<>(currentPosition, currentDirection));
+          queue.add(new Triplet<>(neighbor, newDistance, newDirection));
+        }
+      }
+      visited.add(new Pair<>(currentPosition, currentDirection));
+    }
+
+    currentPosition = endPoint;
+    Set<Coordinate> seats = new HashSet<>();
+    for (var d :
+        Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
+      Queue<Pair<Coordinate, Direction>> toCheck = new LinkedList<>();
+      Set<Pair<Coordinate, Direction>> alreadyChecked = new HashSet<>();
+      toCheck.add(new Pair<>(currentPosition, d));
+      while (!toCheck.isEmpty()) {
+        var c = toCheck.poll();
+        if (alreadyChecked.contains(c)) continue;
+        alreadyChecked.add(c);
+        currentPosition = c.one();
+        currentDirection = c.two();
+        seats.add(currentPosition);
+        if (currentPosition == startPoint) {
+          continue;
+        }
+        var stepList = previous.get(new Pair<>(currentPosition, currentDirection));
+        for (var step : stepList) {
+          toCheck.add(new Pair<>(step.one(), step.two()));
+        }
+      }
+    }
+    return seats.size();
   }
 }
