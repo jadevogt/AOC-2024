@@ -171,7 +171,7 @@ public class SolutionDay16 extends BaseSolution {
    * @return the score of one of the shortest paths through the maze
    */
   @Override
-  public Object partOne(PuzzleInput input) {
+  public Integer partOne(PuzzleInput input) {
     SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
     Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
         findAllMazeSolutions(in.grid(), in.startPoint());
@@ -215,7 +215,7 @@ public class SolutionDay16 extends BaseSolution {
    * @return the number of seats that lie along the path
    */
   @Override
-  public Object partTwo(PuzzleInput input) {
+  public Integer partTwo(PuzzleInput input) {
     SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
     Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
         findAllMazeSolutions(in.grid(), in.startPoint());
