@@ -1,5 +1,8 @@
 package com.expedient.adventofcodejade.common;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 /** Represents a cardinal direction, and provides methods for use when working with a 2D-array */
 public enum Direction {
   UP {
@@ -70,4 +73,13 @@ public enum Direction {
    * @return the next location, given as a Coordinate
    */
   public abstract Coordinate next(Coordinate location);
+
+  /**
+   * Convenience method to retrieve a list of all Directions, to allow for easy iteration over them
+   *
+   * @return list containing all Directions
+   */
+  public static List<Direction> all() {
+    return Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList();
+  }
 }

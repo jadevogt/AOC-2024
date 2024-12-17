@@ -98,16 +98,13 @@ public class SolutionDay16 extends BaseSolution {
       if (c.equals(startPoint)) {
         distance.put(new Pair<>(startPoint, Direction.RIGHT), 0);
       } else {
-        for (Direction d :
-            Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList())
-          distance.put(new Pair<>(c, d), Integer.MAX_VALUE / 2);
+        for (Direction d : Direction.all()) distance.put(new Pair<>(c, d), Integer.MAX_VALUE / 2);
       }
     }
 
     Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous = new HashMap<>();
     for (Coordinate c : mazeCoords) {
-      for (Direction d :
-          Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
+      for (Direction d : Direction.all()) {
         previous.put(new Pair<>(c, d), new ArrayList<>());
       }
     }
@@ -179,8 +176,7 @@ public class SolutionDay16 extends BaseSolution {
     Direction currentDirection;
     List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
     // we don't know what direction the path came from, so just try all of them I guess
-    for (Direction d :
-        Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
+    for (Direction d : Direction.all()) {
       try {
         currentDirection = d;
         while (!currentPosition.equals(in.startPoint())) {
@@ -222,8 +218,7 @@ public class SolutionDay16 extends BaseSolution {
     Set<Coordinate> seats = new HashSet<>();
     Coordinate currentPosition = in.endPoint();
     Direction currentDirection;
-    for (Direction d :
-        Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
+    for (Direction d : Direction.all()) {
       Queue<Pair<Coordinate, Direction>> toCheck = new LinkedList<>();
       Set<Pair<Coordinate, Direction>> alreadyChecked = new HashSet<>();
       toCheck.add(new Pair<>(currentPosition, d));
