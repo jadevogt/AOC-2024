@@ -17,35 +17,19 @@ public class SolutionDay16 extends BaseSolution {
     return c == '.' || c == 'S' || c == 'E';
   }
 
-  public static Direction directionFromTwoCoordinates(Coordinate c1, Coordinate c2) {
-    Direction newDirection = Direction.RIGHT;
-    if (c1.row() < c2.row()) {
-      newDirection = Direction.DOWN;
-    }
-    if (c1.row() > c2.row()) {
-      newDirection = Direction.UP;
-    }
-    if (c1.col() < c2.col()) {
-      newDirection = Direction.RIGHT;
-    }
-    if (c1.col() > c2.col()) {
-      newDirection = Direction.LEFT;
-    }
-    return newDirection;
-  }
-
   public static Map<Coordinate, Integer> getNeighbors(
       Grid<Character> grid,
       Coordinate current,
       Direction currentDirection,
       Set<Pair<Coordinate, Direction>> visited) {
-    var directNeighbors = grid.matchNeighbors(current, SolutionDay16::isTraversable, true);
+    List<Coordinate> directNeighbors =
+        grid.matchNeighbors(current, SolutionDay16::isTraversable, true);
     directNeighbors =
         directNeighbors.stream()
-            .filter(c -> !visited.contains(new Pair<>(c, directionFromTwoCoordinates(current, c))))
+            .filter(c -> !visited.contains(new Pair<>(c, current.directionToCoordinate(c))))
             .toList();
     Map<Coordinate, Integer> weightedNeighbors = new HashMap<>();
-    for (var neighbor : directNeighbors) {
+    for (Coordinate neighbor : directNeighbors) {
       int cost = 2;
       if (((currentDirection == Direction.RIGHT || currentDirection == Direction.LEFT)
               && neighbor.row() != current.row())
@@ -72,19 +56,15 @@ public class SolutionDay16 extends BaseSolution {
     }
   }
 
-  @Override
-  public Object partOne(PuzzleInput input) {
-    Grid<Character> grid = Grid.fromStringList(input.getLines());
-    Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
-    Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
-    List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
+  public Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> findAllMazeSolutions(
+      Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
     HashSet<Pair<Coordinate, Direction>> visited = new HashSet<>();
     Queue<Triplet<Coordinate, Integer, Direction>> queue =
         new PriorityQueue<>(new NeighborComparator());
 
     HashMap<Pair<Coordinate, Direction>, Integer> distance = new HashMap<>();
-    var mazeCoords = grid.matchCoordinates(SolutionDay16::isTraversable);
-    for (var c : mazeCoords) {
+    List<Coordinate> mazeCoords = grid.matchCoordinates(SolutionDay16::isTraversable);
+    for (Coordinate c : mazeCoords) {
       if (c.equals(startPoint)) {
         distance.put(new Pair<>(startPoint, Direction.RIGHT), 0);
       } else {
@@ -94,11 +74,11 @@ public class SolutionDay16 extends BaseSolution {
       }
     }
 
-    Map<Pair<Coordinate, Direction>, Pair<Coordinate, Direction>> previous = new HashMap<>();
-    for (var c : mazeCoords) {
+    Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous = new HashMap<>();
+    for (Coordinate c : mazeCoords) {
       for (Direction d :
           Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
-        previous.put(new Pair<>(c, d), null);
+        previous.put(new Pair<>(c, d), new ArrayList<>());
       }
     }
 
@@ -106,40 +86,63 @@ public class SolutionDay16 extends BaseSolution {
     Direction currentDirection;
     queue.add(new Triplet<>(startPoint, 0, Direction.RIGHT));
     while (!queue.isEmpty()) {
-      var current = queue.poll();
+      Triplet<Coordinate, Integer, Direction> current = queue.poll();
       currentPosition = current.one();
       currentDirection = current.three();
       int queuedDistance = current.two();
       if (queuedDistance > distance.get(new Pair<>(currentPosition, currentDirection))) {
         continue;
       }
-      var neighbors = getNeighbors(grid, currentPosition, currentDirection, visited);
-      for (var neighbor : neighbors.keySet()) {
+      Map<Coordinate, Integer> neighbors =
+          getNeighbors(grid, currentPosition, currentDirection, visited);
+      for (Coordinate neighbor : neighbors.keySet()) {
         if (neighbor.equals(startPoint)) continue;
-        Direction newDirection = directionFromTwoCoordinates(currentPosition, neighbor);
+        Direction newDirection = currentPosition.directionToCoordinate(neighbor);
         int newDistance =
             distance.get(new Pair<>(currentPosition, currentDirection)) + neighbors.get(neighbor);
-        if (newDistance < distance.get(new Pair<>(neighbor, newDirection))) {
-          distance.put(new Pair<>(neighbor, newDirection), newDistance);
-          previous.put(
-              new Pair<>(neighbor, newDirection), new Pair<>(currentPosition, currentDirection));
+        if (newDistance <= distance.get(new Pair<>(neighbor, newDirection))) {
+          if (newDistance < distance.get(new Pair<>(neighbor, newDirection))) {
+            distance.put(new Pair<>(neighbor, newDirection), newDistance);
+            previous.put(new Pair<>(neighbor, newDirection), new ArrayList<>());
+          }
+          List<Pair<Coordinate, Direction>> list = previous.get(new Pair<>(neighbor, newDirection));
+          list.add(new Pair<>(currentPosition, currentDirection));
           queue.add(new Triplet<>(neighbor, newDistance, newDirection));
         }
       }
       visited.add(new Pair<>(currentPosition, currentDirection));
     }
+    return previous;
+  }
 
-    currentPosition = endPoint;
-    currentDirection = Direction.DOWN;
-    for (var d :
+  public record SolutionDay16Input(
+      Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
+    public static SolutionDay16Input fromPuzzleInput(PuzzleInput input) {
+      Grid<Character> grid = Grid.fromStringList(input.getLines());
+      Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
+      Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
+      return new SolutionDay16Input(grid, startPoint, endPoint);
+    }
+  }
+
+  @Override
+  public Object partOne(PuzzleInput input) {
+    SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
+    Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
+        findAllMazeSolutions(in.grid(), in.startPoint(), in.endPoint());
+    Coordinate currentPosition = in.endPoint();
+    Direction currentDirection;
+    List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
+    for (Direction d :
         Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
       try {
         currentDirection = d;
-        while (!currentPosition.equals(startPoint)) {
-          var current = previous.get(new Pair<>(currentPosition, currentDirection));
+        while (!currentPosition.equals(in.startPoint())) {
+          List<Pair<Coordinate, Direction>> current =
+              previous.get(new Pair<>(currentPosition, currentDirection));
           pathTaken.add(new Pair<>(currentPosition, currentDirection));
-          currentPosition = current.one();
-          currentDirection = current.two();
+          currentPosition = current.getFirst().one();
+          currentDirection = current.getFirst().two();
         }
         break;
       } catch (NullPointerException ignored) {
@@ -148,7 +151,7 @@ public class SolutionDay16 extends BaseSolution {
 
     Direction cd = Direction.RIGHT;
     int total = 0;
-    for (var p : pathTaken) {
+    for (Pair<Coordinate, Direction> p : pathTaken) {
       if (p.two() != cd) {
         total += 1000;
         cd = p.two();
@@ -160,83 +163,30 @@ public class SolutionDay16 extends BaseSolution {
 
   @Override
   public Object partTwo(PuzzleInput input) {
-    Grid<Character> grid = Grid.fromStringList(input.getLines());
-    Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
-    Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
-    List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
-    HashSet<Pair<Coordinate, Direction>> visited = new HashSet<>();
-    Queue<Triplet<Coordinate, Integer, Direction>> queue =
-        new PriorityQueue<>(new NeighborComparator());
-
-    HashMap<Pair<Coordinate, Direction>, Integer> distance = new HashMap<>();
-    var mazeCoords = grid.matchCoordinates(SolutionDay16::isTraversable);
-    for (var c : mazeCoords) {
-      if (c.equals(startPoint)) {
-        distance.put(new Pair<>(startPoint, Direction.RIGHT), 0);
-      } else {
-        for (Direction d :
-            Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList())
-          distance.put(new Pair<>(c, d), Integer.MAX_VALUE / 2);
-      }
-    }
-
-    Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous = new HashMap<>();
-    for (var c : mazeCoords) {
-      for (Direction d :
-          Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
-        previous.put(new Pair<>(c, d), new ArrayList<>());
-      }
-    }
-
-    Coordinate currentPosition;
-    Direction currentDirection;
-    queue.add(new Triplet<>(startPoint, 0, Direction.RIGHT));
-    while (!queue.isEmpty()) {
-      var current = queue.poll();
-      currentPosition = current.one();
-      currentDirection = current.three();
-      int queuedDistance = current.two();
-      if (queuedDistance > distance.get(new Pair<>(currentPosition, currentDirection))) {
-        continue;
-      }
-      var neighbors = getNeighbors(grid, currentPosition, currentDirection, visited);
-      for (var neighbor : neighbors.keySet()) {
-        if (neighbor.equals(startPoint)) continue;
-        Direction newDirection = directionFromTwoCoordinates(currentPosition, neighbor);
-        int newDistance =
-            distance.get(new Pair<>(currentPosition, currentDirection)) + neighbors.get(neighbor);
-        if (newDistance <= distance.get(new Pair<>(neighbor, newDirection))) {
-          if (newDistance < distance.get(new Pair<>(neighbor, newDirection))) {
-            distance.put(new Pair<>(neighbor, newDirection), newDistance);
-            previous.put(new Pair<>(neighbor, newDirection), new ArrayList<>());
-          }
-          var list = previous.get(new Pair<>(neighbor, newDirection));
-          list.add(new Pair<>(currentPosition, currentDirection));
-          queue.add(new Triplet<>(neighbor, newDistance, newDirection));
-        }
-      }
-      visited.add(new Pair<>(currentPosition, currentDirection));
-    }
-
-    currentPosition = endPoint;
+    SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
+    Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
+        findAllMazeSolutions(in.grid(), in.startPoint(), in.endPoint());
     Set<Coordinate> seats = new HashSet<>();
-    for (var d :
+    Coordinate currentPosition = in.endPoint();
+    Direction currentDirection;
+    for (Direction d :
         Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
       Queue<Pair<Coordinate, Direction>> toCheck = new LinkedList<>();
       Set<Pair<Coordinate, Direction>> alreadyChecked = new HashSet<>();
       toCheck.add(new Pair<>(currentPosition, d));
       while (!toCheck.isEmpty()) {
-        var c = toCheck.poll();
+        Pair<Coordinate, Direction> c = toCheck.poll();
         if (alreadyChecked.contains(c)) continue;
         alreadyChecked.add(c);
         currentPosition = c.one();
         currentDirection = c.two();
         seats.add(currentPosition);
-        if (currentPosition == startPoint) {
+        if (currentPosition == in.startPoint()) {
           continue;
         }
-        var stepList = previous.get(new Pair<>(currentPosition, currentDirection));
-        for (var step : stepList) {
+        List<Pair<Coordinate, Direction>> stepList =
+            previous.get(new Pair<>(currentPosition, currentDirection));
+        for (Pair<Coordinate, Direction> step : stepList) {
           toCheck.add(new Pair<>(step.one(), step.two()));
         }
       }

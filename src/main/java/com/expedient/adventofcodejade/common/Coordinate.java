@@ -79,6 +79,23 @@ public record Coordinate(int row, int col) {
     return rowDist + colDist;
   }
 
+  public Direction directionToCoordinate(Coordinate c2) {
+    Direction newDirection = Direction.RIGHT;
+    if (row() < c2.row()) {
+      newDirection = Direction.DOWN;
+    }
+    if (row() > c2.row()) {
+      newDirection = Direction.UP;
+    }
+    if (col() < c2.col()) {
+      newDirection = Direction.RIGHT;
+    }
+    if (col() > c2.col()) {
+      newDirection = Direction.LEFT;
+    }
+    return newDirection;
+  }
+
   /**
    * Finds the Euclidean distance between this coordinate and another
    *
