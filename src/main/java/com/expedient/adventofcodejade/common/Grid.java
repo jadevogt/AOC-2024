@@ -447,6 +447,16 @@ public class Grid<T> {
   }
 
   /** Prints the 2D array to stdout */
+  public void print(Function<Coordinate, Character> characterFunction) {
+    for (int rows = 0; rows < rowCount(); rows++) {
+      for (int cols = 0; cols < colCount(); cols++) {
+        System.out.print(characterFunction.apply(new Coordinate(rows, cols)));
+      }
+      System.out.println();
+    }
+  }
+
+  /** Prints the 2D array to stdout */
   public void print() {
     for (int rows = 0; rows < rowCount(); rows++) {
       for (int cols = 0; cols < colCount(); cols++) {
