@@ -13,11 +13,28 @@ public class SolutionDay16 extends BaseSolution {
     super(input, sampleInputOne, sampleInputTwo);
   }
 
+  /**
+   * Given a Character, returns true if the character is considered traversable in the maze
+   *
+   * @param c Character from the maze
+   * @return whether the Character is traversable
+   */
   public static boolean isTraversable(Character c) {
     return c == '.' || c == 'S' || c == 'E';
   }
 
-  public static Map<Coordinate, Integer> getNeighbors(
+  /**
+   * Given the Grid, current position, current direction, and a Set of previously visited
+   * Coordinate, Direction pairs, find neighboring Coordinates and their associated weights (how
+   * much traversing to them will impact the score)
+   *
+   * @param grid Character Grid derived from the input
+   * @param current the current location
+   * @param currentDirection the current direction
+   * @param visited Set of visited Coordinate, Direction pairs
+   * @return a list of Coordinate, Integer pairs representing neighboring vertices and their weights
+   */
+  public static List<Pair<Coordinate, Integer>> getNeighbors(
       Grid<Character> grid,
       Coordinate current,
       Direction currentDirection,
@@ -28,7 +45,7 @@ public class SolutionDay16 extends BaseSolution {
         directNeighbors.stream()
             .filter(c -> !visited.contains(new Pair<>(c, current.directionToCoordinate(c))))
             .toList();
-    Map<Coordinate, Integer> weightedNeighbors = new HashMap<>();
+    List<Pair<Coordinate, Integer>> weightedNeighbors = new ArrayList<>();
     for (Coordinate neighbor : directNeighbors) {
       int cost = 2;
       if (((currentDirection == Direction.RIGHT || currentDirection == Direction.LEFT)
@@ -37,11 +54,15 @@ public class SolutionDay16 extends BaseSolution {
               && neighbor.col() != current.col())) {
         cost += 1000;
       }
-      weightedNeighbors.put(neighbor, cost);
+      weightedNeighbors.add(new Pair<>(neighbor, cost));
     }
     return weightedNeighbors;
   }
 
+  /**
+   * Sorts two Coordinate, Integer, Direction triplets based on the Integer value (score) in
+   * contained in each
+   */
   public static class NeighborComparator
       implements Comparator<Triplet<Coordinate, Integer, Direction>> {
     @Override
@@ -56,8 +77,17 @@ public class SolutionDay16 extends BaseSolution {
     }
   }
 
+  /**
+   * Use Dijkstra's Algorithm to find all possible shortest paths through the maze. Uses the weights
+   * from the getNeighbors method to account for the fact that turns matter more than steps
+   *
+   * @param grid Character Grid derived from the puzzle input
+   * @param startPoint Coordinate that we start at
+   * @return Map containing all Coordinates in the maze, each with a List of Coordinate, Direction
+   *     pairs that leading to that Coordinate along optimal paths
+   */
   public Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> findAllMazeSolutions(
-      Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
+      Grid<Character> grid, Coordinate startPoint) {
     HashSet<Pair<Coordinate, Direction>> visited = new HashSet<>();
     Queue<Triplet<Coordinate, Integer, Direction>> queue =
         new PriorityQueue<>(new NeighborComparator());
@@ -93,21 +123,22 @@ public class SolutionDay16 extends BaseSolution {
       if (queuedDistance > distance.get(new Pair<>(currentPosition, currentDirection))) {
         continue;
       }
-      Map<Coordinate, Integer> neighbors =
+      List<Pair<Coordinate, Integer>> neighbors =
           getNeighbors(grid, currentPosition, currentDirection, visited);
-      for (Coordinate neighbor : neighbors.keySet()) {
-        if (neighbor.equals(startPoint)) continue;
-        Direction newDirection = currentPosition.directionToCoordinate(neighbor);
+      for (Pair<Coordinate, Integer> neighbor : neighbors) {
+        if (neighbor.one().equals(startPoint)) continue;
+        Direction newDirection = currentPosition.directionToCoordinate(neighbor.one());
         int newDistance =
-            distance.get(new Pair<>(currentPosition, currentDirection)) + neighbors.get(neighbor);
-        if (newDistance <= distance.get(new Pair<>(neighbor, newDirection))) {
-          if (newDistance < distance.get(new Pair<>(neighbor, newDirection))) {
-            distance.put(new Pair<>(neighbor, newDirection), newDistance);
-            previous.put(new Pair<>(neighbor, newDirection), new ArrayList<>());
+            distance.get(new Pair<>(currentPosition, currentDirection)) + neighbor.two();
+        if (newDistance <= distance.get(new Pair<>(neighbor.one(), newDirection))) {
+          if (newDistance < distance.get(new Pair<>(neighbor.one(), newDirection))) {
+            distance.put(new Pair<>(neighbor.one(), newDirection), newDistance);
+            previous.put(new Pair<>(neighbor.one(), newDirection), new ArrayList<>());
           }
-          List<Pair<Coordinate, Direction>> list = previous.get(new Pair<>(neighbor, newDirection));
+          List<Pair<Coordinate, Direction>> list =
+              previous.get(new Pair<>(neighbor.one(), newDirection));
           list.add(new Pair<>(currentPosition, currentDirection));
-          queue.add(new Triplet<>(neighbor, newDistance, newDirection));
+          queue.add(new Triplet<>(neighbor.one(), newDistance, newDirection));
         }
       }
       visited.add(new Pair<>(currentPosition, currentDirection));
@@ -115,6 +146,13 @@ public class SolutionDay16 extends BaseSolution {
     return previous;
   }
 
+  /**
+   * Represents parsed grid (maze), starting point, and ending point derived from Puzzle Input
+   *
+   * @param grid
+   * @param startPoint
+   * @param endPoint
+   */
   public record SolutionDay16Input(
       Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
     public static SolutionDay16Input fromPuzzleInput(PuzzleInput input) {
@@ -125,14 +163,22 @@ public class SolutionDay16 extends BaseSolution {
     }
   }
 
+  /**
+   * Find one of the shortest possible paths through the maze with the given parameters, and then
+   * calculate its score.
+   *
+   * @param input the PuzzleInput to be used for the solution
+   * @return the score of one of the shortest paths through the maze
+   */
   @Override
   public Object partOne(PuzzleInput input) {
     SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
     Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
-        findAllMazeSolutions(in.grid(), in.startPoint(), in.endPoint());
+        findAllMazeSolutions(in.grid(), in.startPoint());
     Coordinate currentPosition = in.endPoint();
     Direction currentDirection;
     List<Pair<Coordinate, Direction>> pathTaken = new ArrayList<>();
+    // we don't know what direction the path came from, so just try all of them I guess
     for (Direction d :
         Stream.of(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).toList()) {
       try {
@@ -161,11 +207,18 @@ public class SolutionDay16 extends BaseSolution {
     return total;
   }
 
+  /**
+   * Find all shortest paths through the maze, and then figure out how many coordinates (seats) lie
+   * along those paths
+   *
+   * @param input the PuzzleInput to be used for the solution
+   * @return the number of seats that lie along the path
+   */
   @Override
   public Object partTwo(PuzzleInput input) {
     SolutionDay16Input in = SolutionDay16Input.fromPuzzleInput(input);
     Map<Pair<Coordinate, Direction>, List<Pair<Coordinate, Direction>>> previous =
-        findAllMazeSolutions(in.grid(), in.startPoint(), in.endPoint());
+        findAllMazeSolutions(in.grid(), in.startPoint());
     Set<Coordinate> seats = new HashSet<>();
     Coordinate currentPosition = in.endPoint();
     Direction currentDirection;
