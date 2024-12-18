@@ -27,10 +27,6 @@ public class PuzzleInput {
     this(inputString, false);
   }
 
-  public boolean isTest() {
-    return isTest;
-  }
-
   /**
    * Constructs a PuzzleInput from a given filesystem path
    *
@@ -76,6 +72,10 @@ public class PuzzleInput {
     } catch (IOException e) {
       return PuzzleInput.fromResource("samples/%d/%d".formatted(year, day));
     }
+  }
+
+  public boolean isTest() {
+    return isTest;
   }
 
   /**

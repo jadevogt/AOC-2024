@@ -3,9 +3,7 @@ package com.expedient.adventofcodejade.solutions.year2024;
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.Triplet;
 import com.expedient.adventofcodejade.common.*;
-
 import java.util.*;
-import java.util.stream.Stream;
 
 public class SolutionDay16 extends BaseSolution {
 
@@ -57,24 +55,6 @@ public class SolutionDay16 extends BaseSolution {
       weightedNeighbors.add(new Pair<>(neighbor, cost));
     }
     return weightedNeighbors;
-  }
-
-  /**
-   * Sorts two Coordinate, Integer, Direction triplets based on the Integer value (score) in
-   * contained in each
-   */
-  public static class NeighborComparator
-      implements Comparator<Triplet<Coordinate, Integer, Direction>> {
-    @Override
-    public int compare(
-        Triplet<Coordinate, Integer, Direction> o1, Triplet<Coordinate, Integer, Direction> o2) {
-      if (o1.two() < o2.two()) {
-        return -1;
-      } else if (o1.two() > o2.two()) {
-        return 1;
-      }
-      return 0;
-    }
   }
 
   /**
@@ -141,23 +121,6 @@ public class SolutionDay16 extends BaseSolution {
       visited.add(new Pair<>(currentPosition, currentDirection));
     }
     return previous;
-  }
-
-  /**
-   * Represents parsed grid (maze), starting point, and ending point derived from Puzzle Input
-   *
-   * @param grid
-   * @param startPoint
-   * @param endPoint
-   */
-  public record SolutionDay16Input(
-      Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
-    public static SolutionDay16Input fromPuzzleInput(PuzzleInput input) {
-      Grid<Character> grid = Grid.fromStringList(input.getLines());
-      Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
-      Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
-      return new SolutionDay16Input(grid, startPoint, endPoint);
-    }
   }
 
   /**
@@ -240,5 +203,40 @@ public class SolutionDay16 extends BaseSolution {
       }
     }
     return seats.size();
+  }
+
+  /**
+   * Sorts two Coordinate, Integer, Direction triplets based on the Integer value (score) in
+   * contained in each
+   */
+  public static class NeighborComparator
+      implements Comparator<Triplet<Coordinate, Integer, Direction>> {
+    @Override
+    public int compare(
+        Triplet<Coordinate, Integer, Direction> o1, Triplet<Coordinate, Integer, Direction> o2) {
+      if (o1.two() < o2.two()) {
+        return -1;
+      } else if (o1.two() > o2.two()) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  /**
+   * Represents parsed grid (maze), starting point, and ending point derived from Puzzle Input
+   *
+   * @param grid
+   * @param startPoint
+   * @param endPoint
+   */
+  public record SolutionDay16Input(
+      Grid<Character> grid, Coordinate startPoint, Coordinate endPoint) {
+    public static SolutionDay16Input fromPuzzleInput(PuzzleInput input) {
+      Grid<Character> grid = Grid.fromStringList(input.getLines());
+      Coordinate endPoint = grid.matchCoordinates(c -> c == 'E').getFirst();
+      Coordinate startPoint = grid.matchCoordinates(c -> c == 'S').getFirst();
+      return new SolutionDay16Input(grid, startPoint, endPoint);
+    }
   }
 }

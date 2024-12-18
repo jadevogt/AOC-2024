@@ -2,48 +2,15 @@ package com.expedient.adventofcodejade.solutions.year2024;
 
 import com.expedient.adventofcodejade.BaseSolution;
 import com.expedient.adventofcodejade.common.Coordinate;
-import com.expedient.adventofcodejade.common.Pair;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.common.Vector2;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class SolutionDay14 extends BaseSolution {
   public SolutionDay14(PuzzleInput input, PuzzleInput sampleInputOne, PuzzleInput sampleInputTwo) {
     super(input, sampleInputOne, sampleInputTwo);
-  }
-
-  public record Robot(Coordinate position, Vector2 velocity, int rowCount, int colCount) {
-    public Robot performStep() {
-      var rat =
-          new Robot(
-              velocity.applyWithWraparound(position, rowCount, colCount),
-              velocity,
-              rowCount,
-              colCount);
-      return rat;
-    }
-
-    public Optional<Integer> getQuadrant() {
-      int deadRow = (rowCount - 1) / 2;
-      int deadCol = (colCount - 1) / 2;
-      if (position.row() < deadRow && position.col() < deadCol) {
-        return Optional.of(1);
-      }
-      if (position.row() < deadRow && position.col() > deadCol) {
-        return Optional.of(2);
-      }
-      if (position.row() > deadRow && position.col() < deadCol) {
-        return Optional.of(3);
-      }
-      if (position.row() > deadRow && position.col() > deadCol) {
-        return Optional.of(4);
-      }
-      return Optional.empty();
-    }
   }
 
   public static void printRobots(List<Robot> robots, int rowCount, int colCount, String title) {
@@ -162,5 +129,35 @@ public class SolutionDay14 extends BaseSolution {
       }
     }
     return null;
+  }
+
+  public record Robot(Coordinate position, Vector2 velocity, int rowCount, int colCount) {
+    public Robot performStep() {
+      var rat =
+          new Robot(
+              velocity.applyWithWraparound(position, rowCount, colCount),
+              velocity,
+              rowCount,
+              colCount);
+      return rat;
+    }
+
+    public Optional<Integer> getQuadrant() {
+      int deadRow = (rowCount - 1) / 2;
+      int deadCol = (colCount - 1) / 2;
+      if (position.row() < deadRow && position.col() < deadCol) {
+        return Optional.of(1);
+      }
+      if (position.row() < deadRow && position.col() > deadCol) {
+        return Optional.of(2);
+      }
+      if (position.row() > deadRow && position.col() < deadCol) {
+        return Optional.of(3);
+      }
+      if (position.row() > deadRow && position.col() > deadCol) {
+        return Optional.of(4);
+      }
+      return Optional.empty();
+    }
   }
 }

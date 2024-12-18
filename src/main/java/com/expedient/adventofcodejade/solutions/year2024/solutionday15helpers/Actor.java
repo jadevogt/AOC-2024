@@ -2,7 +2,6 @@ package com.expedient.adventofcodejade.solutions.year2024.solutionday15helpers;
 
 import com.expedient.adventofcodejade.common.Coordinate;
 import com.expedient.adventofcodejade.common.Direction;
-import com.expedient.adventofcodejade.solutions.year2024.SolutionDay15;
 
 public abstract class Actor {
   final Actor[][] grid;

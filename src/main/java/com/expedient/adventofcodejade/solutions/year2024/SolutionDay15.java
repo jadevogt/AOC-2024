@@ -6,7 +6,6 @@ import com.expedient.adventofcodejade.common.Direction;
 import com.expedient.adventofcodejade.common.Grid;
 import com.expedient.adventofcodejade.common.PuzzleInput;
 import com.expedient.adventofcodejade.solutions.year2024.solutionday15helpers.*;
-
 import java.util.*;
 
 public class SolutionDay15 extends BaseSolution {

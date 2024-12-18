@@ -10,7 +10,6 @@ public record Vector2(int rowDiff, int colDiff) {
   public Vector2(Coordinate one, Coordinate two) {
     this(one.row() - two.row(), one.col() - two.col());
   }
-  
 
   /**
    * Reverses the direction of the Vector2
