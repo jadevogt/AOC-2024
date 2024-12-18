@@ -16,9 +16,19 @@ import java.util.stream.Collectors;
 /** Handles both sample and actual input files */
 public class PuzzleInput {
   private final List<String> fileLines;
+  private final boolean isTest;
+
+  private PuzzleInput(String inputString, boolean isTest) {
+    this.fileLines = Arrays.stream(inputString.split("\n")).map(String::trim).toList();
+    this.isTest = isTest;
+  }
 
   private PuzzleInput(String inputString) {
-    this.fileLines = Arrays.stream(inputString.split("\n")).map(String::trim).toList();
+    this(inputString, false);
+  }
+
+  public boolean isTest() {
+    return isTest;
   }
 
   /**
@@ -45,7 +55,7 @@ public class PuzzleInput {
       if (in == null) {
         throw new IOException("Resource not found");
       }
-      return new PuzzleInput(new String(in.readAllBytes(), StandardCharsets.UTF_8));
+      return new PuzzleInput(new String(in.readAllBytes(), StandardCharsets.UTF_8), true);
     }
   }
 

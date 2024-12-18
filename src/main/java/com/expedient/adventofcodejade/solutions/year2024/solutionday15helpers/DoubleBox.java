@@ -40,7 +40,7 @@ public class DoubleBox extends Actor {
       if (n.position == this.position) continue;
       if (!n.tryMove(direction, true)) return false;
     }
-    // if (dry) return true;
+    if (dry) return true;
     for (Coordinate check : toCheck) {
       var n = grid[check.row()][check.col()];
       if (n == null) continue;

@@ -86,8 +86,8 @@ public class SolutionDay14 extends BaseSolution {
   public Object partOne(PuzzleInput input) {
     var lines = input.getLines();
     List<Robot> robots = new ArrayList<>();
-    int rowCount = 103;
-    int colCount = 101;
+    int rowCount = input.isTest() ? 7 : 103;
+    int colCount = input.isTest() ? 11 : 101;
     for (var line : lines) {
       int positionCol = Integer.parseInt(line.split("p=")[1].split(",")[0]);
       int positionRow = Integer.parseInt(line.split(",")[1].split(" ")[0]);
@@ -100,33 +100,8 @@ public class SolutionDay14 extends BaseSolution {
               rowCount,
               colCount));
     }
-    var robotLocations = new HashMap<Coordinate, Integer>();
-    int coolDown = 0;
-    for (int i = 0; i < 999999999; i++) {
-      robotLocations.clear();
+    for (int i = 0; i < 100; i++) {
       robots = robots.stream().map(Robot::performStep).toList();
-      for (var robot : robots) {
-        if (robotLocations.containsKey(robot.position)) {
-          robotLocations.put(robot.position, robotLocations.get(robot.position) + 1);
-        } else {
-          robotLocations.put(robot.position, 1);
-        }
-      }
-      int count = 0;
-      for (var r : robotLocations.keySet()) {
-        for (var s : robotLocations.keySet()) {
-          if (s.distance(r) < 2) {
-            count++;
-          }
-        }
-      }
-      if (count > 875) {
-        printRobots(robots, rowCount, colCount, Integer.toString(i));
-        coolDown = 5;
-      } else if (coolDown > 0) {
-        printRobots(robots, rowCount, colCount, Integer.toString(i));
-        coolDown--;
-      }
     }
     int q1 = 0;
     int q2 = 0;
@@ -146,6 +121,46 @@ public class SolutionDay14 extends BaseSolution {
 
   @Override
   public Object partTwo(PuzzleInput input) {
+    if (input.isTest()) {
+      return "SKIPPED: Solution not available for test inputs";
+    }
+    var lines = input.getLines();
+    List<Robot> robots = new ArrayList<>();
+    int rowCount = input.isTest() ? 7 : 103;
+    int colCount = input.isTest() ? 11 : 101;
+    for (var line : lines) {
+      int positionCol = Integer.parseInt(line.split("p=")[1].split(",")[0]);
+      int positionRow = Integer.parseInt(line.split(",")[1].split(" ")[0]);
+      int velocityCol = Integer.parseInt(line.split("v=")[1].split(",")[0]);
+      int velocityRow = Integer.parseInt(line.split("v=")[1].split(",")[1]);
+      robots.add(
+          new Robot(
+              new Coordinate(positionRow, positionCol),
+              new Vector2(velocityRow, velocityCol),
+              rowCount,
+              colCount));
+    }
+    boolean[][] robotLocations;
+    for (int i = 0; i < Integer.MAX_VALUE; i++) {
+      robotLocations = new boolean[rowCount][colCount];
+      robots = robots.stream().map(Robot::performStep).toList();
+      for (var robot : robots) {
+        robotLocations[robot.position.row()][robot.position.col()] = true;
+      }
+      for (int row = 0; row < robotLocations.length; row++) {
+        int continuous = 0;
+        for (int col = 0; col < robotLocations[row].length; col++) {
+          if (robotLocations[row][col]) {
+            continuous++;
+          } else {
+            continuous = 0;
+          }
+          if (continuous == 10) {
+            return i + 1;
+          }
+        }
+      }
+    }
     return null;
   }
 }

@@ -59,12 +59,6 @@ public class SolutionDay11 extends BaseSolution {
     }
     for (int i = 0; i < iterationCount; i++) {
       applyToHashMap(numberMap);
-      Long minitotal = 0L;
-      for (var key : numberMap.keySet()) {
-        minitotal += numberMap.get(key);
-      }
-      System.out.println("Mini Total for iterations (" + (i + 1) + "): " + minitotal);
-      System.out.println(numberMap);
     }
     Long total = 0L;
     for (var key : numberMap.keySet()) {
@@ -80,7 +74,6 @@ public class SolutionDay11 extends BaseSolution {
 
   @Override
   public Long partTwo(PuzzleInput input) {
-    return null;
-    // return runBlinkIterations(input, 75);
+    return runBlinkIterations(input, 75);
   }
 }

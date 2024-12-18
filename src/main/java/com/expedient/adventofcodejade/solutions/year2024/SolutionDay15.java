@@ -75,38 +75,6 @@ public class SolutionDay15 extends BaseSolution {
     return total;
   }
 
-  public static void printField(Actor[][] field, char dir, char nextDir) {
-    var sb = new StringBuilder();
-    for (int i = 0; i < field.length; i++) {
-      for (int j = 0; j < field[0].length; j++) {
-        if (field[i][j] instanceof DoubleBox) {
-          var p = field[i][j].getPosition();
-          if (p.equals(new Coordinate(i, j))) {
-            sb.append("[");
-          } else {
-            sb.append("]");
-          }
-        }
-        if (field[i][j] instanceof Robot) {
-          sb.append("\u001B[31m");
-          sb.append(dir);
-          sb.append("\u001B[0m");
-        }
-        if (field[i][j] instanceof Wall) {
-          sb.append("#");
-        }
-        if (field[i][j] == null) {
-          sb.append(" ");
-        }
-      }
-      sb.append("\n");
-    }
-    sb.append("Next: ").append(nextDir).append("\n");
-    System.out.print("\033[H\033[2J");
-    System.out.flush();
-    System.out.print(sb);
-  }
-
   @Override
   public Object partTwo(PuzzleInput input) {
     List<String> lines = input.getLines();
@@ -144,23 +112,6 @@ public class SolutionDay15 extends BaseSolution {
       return "ERROR";
     }
     var chars = robotInstructions.toCharArray();
-    // * commented out -- debugging player-controlled character
-    var s = new Scanner(System.in);
-    while (true) {
-      var x = s.nextLine();
-      if (x.contains("w")) {
-        robot.tryMove(Direction.UP, false);
-      } else if (x.contains("a")) {
-        robot.tryMove(Direction.LEFT, false);
-      } else if (x.contains("s")) {
-        robot.tryMove(Direction.DOWN, false);
-      } else if (x.contains("d")) {
-        robot.tryMove(Direction.RIGHT, false);
-      }
-      printField(field, '@', 'X');
-    }
-    // */
-    /*
     for (int i = 0; i < chars.length; i++) {
       char aChar = chars[i];
       switch (aChar) {
@@ -190,9 +141,5 @@ public class SolutionDay15 extends BaseSolution {
       }
     }
     return total;
-    // it's not 1478263
-
-     */
-
   }
 }
