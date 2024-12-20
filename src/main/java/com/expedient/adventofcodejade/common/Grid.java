@@ -256,11 +256,36 @@ public class Grid<T> {
     return safeCoords;
   }
 
+  /**
+   * Returns a list of Coordinates at which lie objects of type T that match the conditions of the
+   * given test
+   *
+   * @param test test that can be performed on a coordinate
+   * @return a List of coordinates at which lie objects that match the conditions
+   */
   public List<Coordinate> matchCoordinates(Predicate<T> test) {
     ArrayList<Coordinate> matches = new ArrayList<>();
     for (int row = 0; row < rowCount(); row++) {
       for (int col = 0; col < colCount(); col++) {
         if (test.test(at(row, col))) {
+          matches.add(new Coordinate(row, col));
+        }
+      }
+    }
+    return matches;
+  }
+
+  /**
+   * Returns a list of Coordinates from the Grid that match the conditions of the given test
+   *
+   * @param test test that can be performed on a Coordinate
+   * @return a List of Coordinates satisfying the test conditions
+   */
+  public List<Coordinate> matchCoordinatesByCoordinate(Predicate<Coordinate> test) {
+    ArrayList<Coordinate> matches = new ArrayList<>();
+    for (int row = 0; row < rowCount(); row++) {
+      for (int col = 0; col < colCount(); col++) {
+        if (test.test(new Coordinate(row, col))) {
           matches.add(new Coordinate(row, col));
         }
       }
