@@ -293,6 +293,32 @@ public class Grid<T> {
     return matches;
   }
 
+  public List<Coordinate> coordinatesWithinTaxicabDistance(
+      Coordinate one, int maxDistance, Predicate<T> test) {
+    int minRow = Math.max(0, one.row() - maxDistance);
+    int maxRow = Math.min(rowCount() - 1, one.row() + maxDistance);
+    int minCol = Math.max(0, one.col() - maxDistance);
+    int maxCol = Math.min(colCount() - 1, one.col() + maxDistance);
+
+    List<Coordinate> coords = new ArrayList<>();
+    for (int row = minRow; row < maxRow; row++) {
+      for (int col = minCol; col < maxCol; col++) {
+        if (Math.abs(one.row() - row) + Math.abs(one.col() - col) > maxDistance) continue;
+        Coordinate coord = new Coordinate(row, col);
+        if (test != null && test.test(at(coord))) {
+          coords.add(coord);
+        } else if (test == null) {
+          coords.add(coord);
+        }
+      }
+    }
+    return coords;
+  }
+
+  public List<Coordinate> coordinatesWithinTaxicabDistance(Coordinate one, int maxDistance) {
+    return coordinatesWithinTaxicabDistance(one, maxDistance, null);
+  }
+
   /**
    * Returns coordinates to the left and right or up and down from the given center point,
    * respecting bounds
